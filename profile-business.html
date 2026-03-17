@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Профиль заказчика — SkillForge</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.sk-page{display:none;}.sk-page.active{display:block;}
+.main-page{opacity:0;transition:opacity 0.35s;}.main-page.loaded{opacity:1;}
+
+.profile-cover{height:180px;background:linear-gradient(135deg,#92400e 0%,#c05621 40%,#e85c2a 100%);position:relative;overflow:hidden;border-radius:var(--radius-md) var(--radius-md) 0 0;}
+.profile-cover::before{content:'B';font-family:var(--font-display);font-size:16rem;font-weight:900;color:rgba(255,255,255,0.06);position:absolute;right:1rem;bottom:-4rem;line-height:1;}
+.profile-hero{background:var(--bg-surface);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius-md) var(--radius-md);padding:0 1.75rem 1.5rem;margin-bottom:1.25rem;}
+.profile-avatar-wrap{position:relative;display:inline-block;margin-top:-40px;margin-bottom:0.85rem;}
+.profile-avatar{width:80px;height:80px;border-radius:var(--radius-md);background:var(--forge);border:4px solid var(--bg-surface);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:900;font-size:1.4rem;color:#fff;}
+.verified-badge{position:absolute;bottom:-4px;right:-4px;width:22px;height:22px;border-radius:50%;background:var(--status-done);border:2px solid var(--bg-surface);display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:#fff;}
+.profile-meta-row{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
+.profile-name{font-family:var(--font-display);font-size:1.25rem;font-weight:900;letter-spacing:-0.02em;margin-bottom:0.15rem;}
+.profile-handle{font-size:0.78rem;color:var(--text-muted);margin-bottom:0.45rem;}
+.profile-bio{font-size:0.84rem;color:var(--text-secondary);max-width:500px;line-height:1.55;margin-bottom:0.75rem;}
+.profile-info-row{display:flex;flex-wrap:wrap;gap:1rem;}
+.profile-info-item{display:flex;align-items:center;gap:0.35rem;font-size:0.76rem;color:var(--text-muted);}
+.profile-info-item strong{color:var(--text-secondary);}
+.profile-stats-row{display:flex;gap:0;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-top:1rem;}
+.profile-stat{flex:1;text-align:center;padding:0.8rem 0.5rem;border-right:1px solid var(--border);transition:background var(--transition);}
+.profile-stat:last-child{border-right:none;}
+.profile-stat:hover{background:var(--bg-raised);}
+.profile-stat-val{font-family:var(--font-display);font-size:1.3rem;font-weight:900;line-height:1;}
+.profile-stat-label{font-size:0.6rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--text-muted);margin-top:0.3rem;}
+
+.profile-tabs{display:flex;background:var(--bg-surface);border:1px solid var(--border);border-bottom:none;border-radius:var(--radius-md) var(--radius-md) 0 0;padding:0 1.25rem;overflow-x:auto;scrollbar-width:none;}
+.profile-tabs::-webkit-scrollbar{display:none;}
+.ptab{font-size:0.78rem;font-weight:600;padding:0.85rem 1rem;color:var(--text-muted);border-bottom:2px solid transparent;cursor:pointer;transition:all var(--transition);white-space:nowrap;margin-bottom:-1px;display:flex;align-items:center;gap:0.4rem;}
+.ptab:hover{color:var(--text-primary);}
+.ptab.active{color:var(--forge);border-bottom-color:var(--forge);}
+.ptab-count{font-size:0.58rem;font-weight:700;background:var(--bg-overlay);color:var(--text-muted);padding:0.1rem 0.45rem;border-radius:9px;}
+.ptab.active .ptab-count{background:var(--forge-dim);color:var(--forge);}
+.tab-panel{display:none;}.tab-panel.active{display:block;}
+.tab-body{background:var(--bg-surface);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius-md) var(--radius-md);padding:1.5rem;}
+
+.task-pub-card{border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;transition:all var(--transition);background:var(--bg-surface);margin-bottom:0.75rem;}
+.task-pub-card:hover{border-color:var(--forge-border);box-shadow:var(--shadow-sm);}
+.task-pub-header{padding:0.9rem 1.1rem;display:flex;align-items:flex-start;justify-content:space-between;gap:0.75rem;}
+.task-pub-body{padding:0 1.1rem 0.9rem;}
+.task-pub-title{font-size:0.88rem;font-weight:600;margin-bottom:0.2rem;}
+.task-pub-meta{font-size:0.72rem;color:var(--text-muted);}
+.task-pub-footer{padding:0.75rem 1.1rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg-raised);}
+
+.applicant-card{display:flex;align-items:center;gap:0.85rem;padding:0.9rem 1.25rem;border-bottom:1px solid var(--border);transition:background var(--transition);}
+.applicant-card:last-child{border-bottom:none;}
+.applicant-card:hover{background:var(--bg-raised);}
+.match-badge{font-family:var(--font-display);font-size:0.85rem;font-weight:900;}
+
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);width:100%;max-width:500px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);}
+.modal-header{padding:1.1rem 1.4rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.modal-title{font-family:var(--font-display);font-size:0.82rem;font-weight:700;}
+.modal-close{width:26px;height:26px;border-radius:var(--radius-sm);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:0.85rem;color:var(--text-muted);}
+.modal-close:hover{border-color:var(--border-hover);color:var(--text-primary);}
+.modal-body{padding:1.4rem;}
+
+.review-card{padding:1rem 1.2rem;border:1px solid var(--border);border-radius:var(--radius-md);margin-bottom:0.75rem;}
+</style>
+</head>
+<body>
+<div class="app-shell">
+<aside class="sidebar">
+  <div class="sidebar-logo"><a href="index.html">Skill<span>Forge</span></a></div>
+  <div class="sidebar-user">
+    <div class="user-card">
+      <div class="avatar avatar-md av-forge">ТК</div>
+      <div><div class="user-name">Алексей Воронов</div><div class="user-org">ООО «ТехКафе»</div><span class="user-role-badge badge-business">Заказчик · Верифицирован ✓</span></div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Главное</div>
+    <a href="dashboard-business.html" class="nav-item"><span class="nav-icon">⊞</span> Дашборд</a>
+    <a href="#" class="nav-item"><span class="nav-icon">◈</span> Мои задачи <span class="nav-badge">4</span></a>
+    <a href="#" class="nav-item"><span class="nav-icon">⊕</span> Создать задачу</a>
+    <a href="#" class="nav-item"><span class="nav-icon">◉</span> Кандидаты <span class="nav-badge">12</span></a>
+    <a href="profile-business.html" class="nav-item active"><span class="nav-icon">👤</span> Профиль компании</a>
+    <div class="nav-section-label">Работа</div>
+    <a href="#" class="nav-item"><span class="nav-icon">✉</span> Чат <span class="nav-badge">5</span></a>
+    <div class="nav-section-label">AI-инструменты</div>
+    <a href="ai-tz.html" class="nav-item"><span class="nav-icon">✦</span> Генератор ТЗ <span class="user-role-badge badge-ai" style="margin-left:auto;margin-top:0;font-size:0.5rem;">AI</span></a>
+  </nav>
+  <div class="sidebar-bottom">
+    <a href="#" class="nav-item"><span class="nav-icon">⚙</span> Настройки</a>
+    <a href="index.html" class="nav-item text-muted"><span class="nav-icon">←</span> Выйти</a>
+  </div>
+</aside>
+
+<header class="topbar">
+  <div class="topbar-breadcrumb"><a href="dashboard-business.html">Дашборд</a><span class="topbar-sep">/</span><span class="crumb-active">Профиль компании</span></div>
+  <div class="topbar-actions">
+    <button class="btn btn-secondary btn-sm" onclick="openEditModal()">✏ Редактировать</button>
+    <button class="theme-toggle" onclick="toggleTheme()"><span class="icon-moon">🌙</span><span class="icon-sun">☀️</span></button>
+    <button class="icon-btn">🔔<span class="dot"></span></button>
+    <div class="avatar avatar-sm av-forge">ТК</div>
+  </div>
+</header>
+
+<main class="main-content">
+  <div class="sk-page active" id="skeleton">
+    <div class="skeleton" style="height:180px;border-radius:var(--radius-md) var(--radius-md) 0 0;"></div>
+    <div class="skeleton" style="height:180px;border-radius:0 0 var(--radius-md) var(--radius-md);margin-bottom:1rem;"></div>
+    <div class="grid-2"><div class="skeleton" style="height:300px;border-radius:var(--radius-md);"></div><div class="skeleton" style="height:300px;border-radius:var(--radius-md);"></div></div>
+  </div>
+
+  <div class="main-page" id="mainPage">
+    <!-- COVER -->
+    <div class="profile-cover">
+      <div style="position:absolute;top:1rem;right:1rem;">
+        <button class="btn btn-sm" style="background:rgba(255,255,255,0.12);color:#fff;border-color:rgba(255,255,255,0.2);font-size:0.58rem;" onclick="openEditModal()">✏ Обложка</button>
+      </div>
+    </div>
+
+    <!-- HERO -->
+    <div class="profile-hero">
+      <div class="profile-meta-row">
+        <div style="flex:1;">
+          <div class="profile-avatar-wrap">
+            <div class="profile-avatar">ТК</div>
+            <div class="verified-badge">✓</div>
+          </div>
+          <div class="profile-name">ООО «ТехКафе»</div>
+          <div class="profile-handle">ИНН 7743123456 · ЕГРЮЛ · Верифицирован ✓</div>
+          <p class="profile-bio">Сеть кофеен в Москве. Развиваем цифровую инфраструктуру бизнеса: сайт, соцсети, брендинг. Работаем со студентами SkillForge с февраля 2025.</p>
+          <div class="profile-info-row">
+            <div class="profile-info-item">📍 <strong>Москва</strong></div>
+            <div class="profile-info-item">🏢 <strong>Малый бизнес</strong> · Сфера: HoReCa</div>
+            <div class="profile-info-item">📅 На платформе с <strong>февраля 2025</strong></div>
+          </div>
+        </div>
+        <div style="flex-shrink:0;display:flex;flex-direction:column;gap:0.5rem;align-items:flex-end;padding-top:3.5rem;">
+          <span class="status status-done">Верифицирован ЕГРЮЛ ✓</span>
+          <span class="user-role-badge badge-business">Заказчик</span>
+          <button class="btn btn-primary btn-sm" onclick="openEditModal()">Редактировать</button>
+        </div>
+      </div>
+      <div class="profile-stats-row">
+        <div class="profile-stat"><div class="profile-stat-val">8</div><div class="profile-stat-label">Задач всего</div></div>
+        <div class="profile-stat"><div class="profile-stat-val" style="color:var(--status-progress);">4</div><div class="profile-stat-label">Активных</div></div>
+        <div class="profile-stat"><div class="profile-stat-val" style="color:var(--status-done);">4.7</div><div class="profile-stat-label">Рейтинг</div></div>
+        <div class="profile-stat"><div class="profile-stat-val" style="color:var(--status-done);">100%</div><div class="profile-stat-label">Оплачено</div></div>
+        <div class="profile-stat"><div class="profile-stat-val">12</div><div class="profile-stat-label">Откликов</div></div>
+      </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="profile-tabs">
+      <div class="ptab active" onclick="switchTab(this,'tasks')">Задачи <span class="ptab-count">8</span></div>
+      <div class="ptab" onclick="switchTab(this,'applicants')">Отклики <span class="ptab-count" style="background:rgba(232,92,42,0.1);color:var(--forge);">12</span></div>
+      <div class="ptab" onclick="switchTab(this,'history')">История сделок</div>
+      <div class="ptab" onclick="switchTab(this,'reviews')">Отзывы <span class="ptab-count">6</span></div>
+      <div class="ptab" onclick="switchTab(this,'info')">О компании</div>
+    </div>
+    <div class="tab-body">
+
+      <!-- TASKS -->
+      <div class="tab-panel active" id="tab-tasks">
+        <div class="flex justify-between items-center mb-4">
+          <div class="text-xs text-muted font-bold" style="letter-spacing:0.08em;text-transform:uppercase;">Задачи · 4 активных</div>
+          <a href="ai-tz.html" class="btn btn-primary btn-sm">✦ Создать задачу с AI</a>
+        </div>
+        <div class="task-pub-card">
+          <div class="task-pub-header">
+            <div><div class="task-pub-title">Редизайн лендинга кофейни «Утро»</div><div class="task-pub-meta">Figma · HTML/CSS · до 18 марта</div></div>
+            <span class="status status-progress">В работе</span>
+          </div>
+          <div class="task-pub-body">
+            <div class="flex items-center gap-2 mb-2"><div class="avatar avatar-xs av-steel">АК</div><span class="text-xs">Алёна Козлова</span><span class="text-xs text-muted">· Ментор: Михайлова С.В.</span></div>
+            <div class="progress-bar mb-1"><div class="progress-fill" style="width:65%;"></div></div>
+          </div>
+          <div class="task-pub-footer"><span class="text-xs text-muted">65% выполнено · 5 дней до дедлайна</span><div class="flex gap-2"><a href="task-detail.html" class="btn btn-ghost btn-sm">Открыть</a></div></div>
+        </div>
+        <div class="task-pub-card">
+          <div class="task-pub-header">
+            <div><div class="task-pub-title">Логотип и брендбук барбершопа</div><div class="task-pub-meta">Figma · Брендинг · до 20 марта</div></div>
+            <span class="status status-review">На проверке</span>
+          </div>
+          <div class="task-pub-body"><div class="flex items-center gap-2"><div class="avatar avatar-xs av-steel">АК</div><span class="text-xs">Алёна Козлова — ждёт вашего ответа</span></div></div>
+          <div class="task-pub-footer"><span class="text-xs" style="color:var(--forge);">⚡ Нужно принять работу</span><div class="flex gap-2"><button class="btn btn-primary btn-sm">Принять</button><button class="btn btn-ghost btn-sm">Правки</button></div></div>
+        </div>
+        <div class="task-pub-card">
+          <div class="task-pub-header">
+            <div><div class="task-pub-title">UI-кит для мобильного приложения</div><div class="task-pub-meta">Figma · UI · до 5 апреля</div></div>
+            <span class="status status-new">Сбор откликов</span>
+          </div>
+          <div class="task-pub-body"><div class="text-xs text-muted">Получено откликов: <strong>12</strong> · AI-мэтчинг предложил 5 кандидатов</div></div>
+          <div class="task-pub-footer"><span class="text-xs text-muted">2 400₽ · 21 день</span><div class="flex gap-2"><button class="btn btn-primary btn-sm">Смотреть отклики</button></div></div>
+        </div>
+        <div class="task-pub-card">
+          <div class="task-pub-header">
+            <div><div class="task-pub-title">SMM-стратегия для Telegram-канала</div><div class="task-pub-meta">SMM · Контент · до 10 апреля</div></div>
+            <span class="status status-new">Поиск исполнителя</span>
+          </div>
+          <div class="task-pub-body"><div class="text-xs text-muted">AI-мэтчинг ищет подходящих студентов...</div></div>
+          <div class="task-pub-footer"><span class="text-xs text-muted">900₽ · 14 дней</span><div class="flex gap-2"><button class="btn btn-ghost btn-sm">Редактировать</button></div></div>
+        </div>
+      </div>
+
+      <!-- APPLICANTS -->
+      <div class="tab-panel" id="tab-applicants">
+        <div class="flex justify-between items-center mb-4">
+          <div class="text-xs text-muted font-bold" style="letter-spacing:0.08em;text-transform:uppercase;">Отклики · 12 новых</div>
+          <span class="text-xs text-muted">AI-совместимость по навыкам</span>
+        </div>
+        <div class="card" style="box-shadow:none;">
+          <div class="card-body-flush">
+            <div class="applicant-card">
+              <div class="avatar avatar-sm av-purple">МВ</div>
+              <div style="flex:1;"><div class="text-sm font-medium">Максим Воронов</div><div class="text-xs text-muted">МГТУ · Frontend · 4 курс · Ментор: Иванов А.В.</div></div>
+              <div class="tag-row"><span class="tag tag-blue">React</span><span class="tag tag-forge">Figma</span></div>
+              <span class="match-badge" style="color:var(--status-done);">97%</span>
+              <button class="btn btn-primary btn-sm">Связаться</button>
+            </div>
+            <div class="applicant-card">
+              <div class="avatar avatar-sm av-steel">ДА</div>
+              <div style="flex:1;"><div class="text-sm font-medium">Дарья Антонова</div><div class="text-xs text-muted">Колледж дизайна №10 · 3 курс · Ментор: Михайлова С.В.</div></div>
+              <div class="tag-row"><span class="tag tag-forge">Figma</span><span class="tag tag-purple">UX</span></div>
+              <span class="match-badge" style="color:var(--status-done);">91%</span>
+              <button class="btn btn-secondary btn-sm">Смотреть</button>
+            </div>
+            <div class="applicant-card">
+              <div class="avatar avatar-sm av-teal">КН</div>
+              <div style="flex:1;"><div class="text-sm font-medium">Кирилл Никитин</div><div class="text-xs text-muted">СПбГУ · Веб-разработка · 2 курс</div></div>
+              <div class="tag-row"><span class="tag tag-blue">HTML/CSS</span><span class="tag tag-green">JS</span></div>
+              <span class="match-badge" style="color:var(--status-progress);">78%</span>
+              <button class="btn btn-ghost btn-sm">Смотреть</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HISTORY -->
+      <div class="tab-panel" id="tab-history">
+        <div class="text-xs text-muted font-bold mb-4" style="letter-spacing:0.08em;text-transform:uppercase;">История сделок · 4 завершено</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Задача</th><th>Исполнитель</th><th>Стоимость</th><th>Оценка</th><th>Дата</th></tr></thead>
+            <tbody>
+              <tr><td><div class="text-sm font-medium">Фирменный стиль «Ретро-бар»</div></td><td><div class="flex items-center gap-2"><div class="avatar avatar-xs av-steel">АК</div><span class="text-sm">Козлова А.</span></div></td><td><span class="font-medium" style="color:var(--status-done);">1 200₽</span></td><td><span style="color:var(--spark);">⭐ 5.0</span></td><td><span class="text-xs text-muted">Янв. 2025</span></td></tr>
+              <tr><td><div class="text-sm font-medium">Лендинг «Утро v1»</div></td><td><div class="flex items-center gap-2"><div class="avatar avatar-xs av-purple">МВ</div><span class="text-sm">Воронов М.</span></div></td><td><span class="font-medium" style="color:var(--status-done);">800₽</span></td><td><span style="color:var(--spark);">⭐ 4.8</span></td><td><span class="text-xs text-muted">Дек. 2024</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- REVIEWS -->
+      <div class="tab-panel" id="tab-reviews">
+        <div class="flex justify-between items-center mb-4">
+          <div class="text-xs text-muted font-bold" style="letter-spacing:0.08em;text-transform:uppercase;">Отзывы о заказчике</div>
+          <div class="flex items-center gap-2"><span style="color:var(--spark);">⭐</span><span class="font-display font-bold" style="font-size:1.1rem;">4.7</span><span class="text-xs text-muted">из 5</span></div>
+        </div>
+        <div class="review-card">
+          <div class="flex items-start justify-between mb-2"><div class="flex items-center gap-2"><div class="avatar avatar-xs av-steel">АК</div><div><div class="text-sm font-medium">Алёна Козлова</div><div class="text-xs text-muted">Студент</div></div></div><div style="color:var(--spark);font-size:0.8rem;">★★★★★</div></div>
+          <div class="text-sm text-secondary" style="line-height:1.55;margin-bottom:0.5rem;">Заказчик чёткий — ТЗ сгенерировано через AI, всё понятно с первого прочтения. Оплатил сразу после подтверждения ментора. Рекомендую!</div>
+          <div class="text-xs text-muted">Март 2025</div>
+        </div>
+        <div class="review-card">
+          <div class="flex items-start justify-between mb-2"><div class="flex items-center gap-2"><div class="avatar avatar-xs av-purple">МВ</div><div><div class="text-sm font-medium">Максим Воронов</div><div class="text-xs text-muted">Студент</div></div></div><div style="color:var(--spark);font-size:0.8rem;">★★★★☆</div></div>
+          <div class="text-sm text-secondary" style="line-height:1.55;margin-bottom:0.5rem;">Хороший заказчик, платит вовремя. Иногда добавляет правки в процессе, но всегда в рамках разумного. Работать приятно.</div>
+          <div class="text-xs text-muted">Декабрь 2024</div>
+        </div>
+      </div>
+
+      <!-- INFO -->
+      <div class="tab-panel" id="tab-info">
+        <div class="grid-2 gap-4">
+          <div>
+            <div class="text-xs text-muted font-bold mb-3" style="letter-spacing:0.08em;text-transform:uppercase;">О компании</div>
+            <div class="form-group"><label class="form-label">Название организации</label><input type="text" value="ООО «ТехКафе»" readonly style="background:var(--bg-raised);color:var(--text-muted);"></div>
+            <div class="form-group"><label class="form-label">ИНН</label><input type="text" value="7743123456" readonly style="background:var(--bg-raised);color:var(--text-muted);"></div>
+            <div class="form-group"><label class="form-label">Сфера деятельности</label><input type="text" value="HoReCa / Сеть кофеен" readonly style="background:var(--bg-raised);color:var(--text-muted);"></div>
+            <div class="form-hint" style="margin-top:-0.5rem;">Данные верифицированы через ЕГРЮЛ · <span style="color:var(--status-done);">✓ Актуальны</span></div>
+          </div>
+          <div>
+            <div class="text-xs text-muted font-bold mb-3" style="letter-spacing:0.08em;text-transform:uppercase;">Предпочтения по найму</div>
+            <div class="form-group"><label class="form-label">Специализации</label>
+              <div class="tag-row flex-wrap gap-2 mt-1">
+                <span class="tag tag-forge">Дизайн</span>
+                <span class="tag tag-blue">Frontend</span>
+                <span class="tag tag-purple">UX</span>
+                <span class="tag">SMM</span>
+              </div>
+            </div>
+            <div class="form-group mt-3"><label class="form-label">Предпочтительные учебные заведения</label><input type="text" placeholder="Колледж дизайна №10, МГТУ..."></div>
+            <div class="form-group"><label class="form-label">Проектная рассылка</label>
+              <div class="flex gap-2 items-center">
+                <input type="text" placeholder="Введите название колледжа или вуза..." style="flex:1;">
+                <button class="btn btn-secondary btn-sm" style="white-space:nowrap;">Добавить</button>
+              </div>
+              <div class="form-hint">Ваши задачи будут отправляться напрямую студентам этого заведения</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- tab-body -->
+  </div>
+</main>
+
+<nav class="bottom-nav">
+  <div class="bn-item" onclick="location.href='dashboard-business.html'"><span class="bn-icon">⊞</span><span class="bn-label">Главная</span></div>
+  <div class="bn-item"><span class="bn-icon">◈</span><span class="bn-label">Задачи</span><span class="bn-badge">4</span></div>
+  <div class="bn-item"><span class="bn-icon">⊕</span><span class="bn-label">Создать</span></div>
+  <div class="bn-item"><span class="bn-icon">✉</span><span class="bn-label">Чат</span><span class="bn-badge">5</span></div>
+  <div class="bn-item active"><span class="bn-icon">👤</span><span class="bn-label">Профиль</span></div>
+</nav>
+</div>
+
+<div class="modal-overlay" id="editModal" onclick="if(event.target===this)closeEditModal()">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">Редактировать профиль компании</span><button class="modal-close" onclick="closeEditModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Название компании</label><input type="text" value="ООО «ТехКафе»"></div>
+      <div class="form-group"><label class="form-label">Сфера деятельности</label><input type="text" value="HoReCa / Сеть кофеен"></div>
+      <div class="form-group"><label class="form-label">О компании</label><textarea rows="3">Сеть кофеен в Москве. Развиваем цифровую инфраструктуру бизнеса: сайт, соцсети, брендинг.</textarea></div>
+      <div class="form-group"><label class="form-label">Город</label><input type="text" value="Москва"></div>
+      <div class="form-group"><label class="form-label">Контактный email</label><input type="email" value="info@techcafe.ru"></div>
+      <div class="flex gap-3"><button class="btn btn-primary" onclick="closeEditModal()">Сохранить</button><button class="btn btn-ghost" onclick="closeEditModal()">Отмена</button></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){const s=localStorage.getItem('sf-theme')||'light';document.documentElement.setAttribute('data-theme',s);})();
+function toggleTheme(){const h=document.documentElement;const n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);localStorage.setItem('sf-theme',n);}
+window.addEventListener('DOMContentLoaded',()=>{setTimeout(()=>{document.getElementById('skeleton').classList.remove('active');document.getElementById('mainPage').classList.add('loaded');},700);});
+function switchTab(el,id){document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));el.classList.add('active');document.getElementById('tab-'+id).classList.add('active');}
+function openEditModal(){document.getElementById('editModal').classList.add('open');}
+function closeEditModal(){document.getElementById('editModal').classList.remove('open');}
+</script>
+</body>
+</html>
