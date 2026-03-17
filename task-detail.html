@@ -1,68 +1,83 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-theme="light">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Задача #47 — SkillForge</title>
 <link rel="stylesheet" href="style.css">
+<style>
+.sk-page{display:none;}.sk-page.active{display:block;}
+.main-page{opacity:0;transition:opacity 0.3s;}.main-page.loaded{opacity:1;}
+.milestone-row{display:flex;align-items:center;gap:0.6rem;padding:0.4rem 0;}
+.ms-dot{width:18px;height:18px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:700;}
+.ms-dot-done{background:var(--status-done);color:#fff;}
+.ms-dot-active{background:var(--forge);color:#fff;}
+.ms-dot-todo{background:transparent;border:1.5px solid var(--border);}
+.checklist-item{display:flex;align-items:center;gap:0.75rem;padding:0.55rem 0.85rem;background:var(--bg-raised);border-radius:var(--radius-sm);margin-bottom:0.5rem;}
+.checklist-item input{width:auto;background:none;border:none;accent-color:var(--forge);cursor:pointer;}
+.info-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:1.25rem;}
+.info-cell{background:var(--bg-raised);padding:0.85rem 1rem;}
+.info-cell-label{font-size:0.62rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.3rem;}
+.participant-item{display:flex;align-items:center;gap:0.75rem;padding:0.6rem 0;border-bottom:1px solid var(--border);}
+.participant-item:last-child{border-bottom:none;}
+</style>
 </head>
 <body>
 <div class="app-shell">
-
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="sidebar-logo"><a href="#">Skill<span>Forge</span></a></div>
-    <div class="sidebar-user">
-      <div class="user-card">
-        <div class="avatar avatar-md avatar-steel">АК</div>
-        <div>
-          <div class="user-name">Алёна Козлова</div>
-          <div class="user-role">Колледж дизайна №10</div>
-          <span class="user-role-badge badge-student">Студент · 3 курс</span>
-        </div>
-      </div>
+<aside class="sidebar">
+  <div class="sidebar-logo"><a href="#">Skill<span>Forge</span></a></div>
+  <div class="sidebar-user">
+    <div class="user-card">
+      <div class="avatar avatar-md av-steel">АК</div>
+      <div><div class="user-name">Алёна Козлова</div><div class="user-org">Колледж дизайна №10</div><span class="user-role-badge badge-student">Студент · 3 курс</span></div>
     </div>
-    <nav class="sidebar-nav">
-      <div class="nav-section-label">Главное</div>
-      <a href="dashboard-student.html" class="nav-item"><span class="nav-icon">⊞</span> Дашборд</a>
-      <a href="#" class="nav-item active"><span class="nav-icon">◈</span> Задачи <span class="nav-badge">3</span></a>
-      <a href="#" class="nav-item"><span class="nav-icon">◉</span> Портфолио</a>
-      <a href="#" class="nav-item"><span class="nav-icon">◎</span> Мэтчинг</a>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Главное</div>
+    <a href="dashboard-student.html" class="nav-item"><span class="nav-icon">⊞</span> Дашборд</a>
+    <a href="#" class="nav-item active"><span class="nav-icon">◈</span> Мои задачи <span class="nav-badge">3</span></a>
+    <a href="#" class="nav-item"><span class="nav-icon">◉</span> Портфолио</a>
+    <a href="#" class="nav-item"><span class="nav-icon">◎</span> Мэтчинг</a>
+    <div class="nav-section-label">Коммуникация</div>
+    <a href="#" class="nav-item"><span class="nav-icon">✉</span> Чат <span class="nav-badge">2</span></a>
+    <a href="#" class="nav-item"><span class="nav-icon">⊛</span> Ментор</a>
+    <div class="nav-section-label">AI-инструменты</div>
+    <a href="#" class="nav-item"><span class="nav-icon">✦</span> Smart-Портфолио</a>
+    <a href="#" class="nav-item"><span class="nav-icon">◈</span> База знаний AI</a>
+  </nav>
+  <div class="sidebar-bottom">
+    <a href="#" class="nav-item"><span class="nav-icon">⚙</span> Настройки</a>
+    <a href="../index.html" class="nav-item text-muted"><span class="nav-icon">←</span> Выйти</a>
+  </div>
+</aside>
 
-      <div class="nav-section-label">Коммуникация</div>
-      <a href="#" class="nav-item"><span class="nav-icon">✉</span> Чат <span class="nav-badge">2</span></a>
-      <a href="#" class="nav-item"><span class="nav-icon">⊛</span> Ментор</a>
+<header class="topbar">
+  <div class="topbar-breadcrumb">
+    <a href="dashboard-student.html">Дашборд</a>
+    <span class="topbar-sep">/</span>
+    <a href="#">Задачи</a>
+    <span class="topbar-sep">/</span>
+    <span class="crumb-active">Задача #47</span>
+  </div>
+  <div class="topbar-actions">
+    <button class="theme-toggle" onclick="toggleTheme()"><span class="icon-moon">🌙</span><span class="icon-sun">☀️</span></button>
+    <button class="icon-btn">🔔<span class="dot"></span></button>
+    <div class="avatar avatar-sm av-steel">АК</div>
+  </div>
+</header>
 
-      <div class="nav-section-label">AI-инструменты</div>
-      <a href="#" class="nav-item"><span class="nav-icon">✦</span> Smart-Портфолио <span class="user-role-badge badge-ai" style="margin-left:auto;margin-top:0;">AI</span></a>
-      <a href="#" class="nav-item"><span class="nav-icon">◈</span> База знаний AI</a>
-    </nav>
-    <div class="sidebar-bottom">
-      <a href="#" class="nav-item"><span class="nav-icon">⚙</span> Настройки</a>
-      <a href="../index.html" class="nav-item" style="color:var(--text-muted)"><span class="nav-icon">←</span> Выйти</a>
-    </div>
-  </aside>
-
-  <!-- TOPBAR -->
-  <header class="topbar">
-    <div class="topbar-title">
-      <a href="dashboard-student.html" style="color:var(--text-muted); font-family:var(--font-body); font-weight:400; font-size:0.85rem;">← Задачи</a>
-      <span style="margin:0 0.75rem; color:var(--text-muted);">/</span>
-      Задача #47 — Редизайн лендинга кофейни
-    </div>
-    <div class="topbar-actions">
-      <button class="icon-btn">🔔<span class="dot"></span></button>
-      <div class="avatar avatar-sm avatar-steel">АК</div>
-    </div>
-  </header>
+<main class="main-content">
+  <!-- SKELETON -->
+  <div class="sk-page active" id="skeleton">
+    <div class="flex justify-between items-center mb-6"><div class="flex-col gap-2"><div class="flex gap-2 mb-2"><div class="skeleton sk-badge" style="width:80px;"></div><div class="skeleton sk-badge" style="width:100px;"></div></div><div class="skeleton" style="width:350px;height:28px;border-radius:4px;"></div><div class="skeleton sk-text-sm" style="width:200px;margin-top:4px;"></div></div><div class="flex gap-2"><div class="skeleton sk-btn" style="width:160px;"></div><div class="skeleton sk-btn" style="width:130px;"></div></div></div>
+    <div class="skeleton" style="height:8px;border-radius:4px;margin-bottom:1.5rem;"></div>
+    <div class="grid-2"><div class="flex-col gap-4"><div class="card" style="min-height:400px;"><div class="card-header"><div class="skeleton sk-text" style="width:140px;"></div></div><div class="card-body flex-col gap-4"><div class="skeleton" style="height:60px;border-radius:var(--radius-sm);"></div><div class="skeleton" style="height:120px;border-radius:var(--radius-sm);"></div><div class="skeleton" style="height:180px;border-radius:var(--radius-sm);"></div></div></div></div><div class="flex-col gap-4"><div class="card" style="height:130px;"><div class="card-header"><div class="skeleton sk-text" style="width:100px;"></div></div><div class="card-body flex-col gap-3"><div class="skeleton" style="height:50px;border-radius:var(--radius-sm);"></div></div></div><div class="card" style="height:260px;"><div class="card-header"><div class="skeleton sk-text" style="width:100px;"></div></div><div class="card-body flex-col gap-3"><div class="skeleton" style="height:40px;border-radius:var(--radius-sm);"></div><div class="skeleton" style="height:40px;border-radius:var(--radius-sm);"></div><div class="skeleton" style="height:40px;border-radius:var(--radius-sm);"></div></div></div></div></div>
+  </div>
 
   <!-- MAIN -->
-  <main class="main-content">
-
-    <!-- Task header -->
+  <div class="main-page" id="mainPage">
     <div class="page-header">
-      <div class="page-header-left">
-        <div class="flex items-center gap-3 mb-2">
+      <div>
+        <div class="flex gap-2 items-center mb-2">
           <span class="status status-progress">В работе</span>
           <span class="text-xs text-muted">Задача #47</span>
           <span class="text-xs text-muted">· Срок: 18 марта 2025</span>
@@ -70,35 +85,32 @@
         <h1 class="page-title">Редизайн лендинга кофейни «Утро»</h1>
         <p class="page-subtitle">Заказчик: ООО «ТехКафе» · Ментор: Михайлова С.В.</p>
       </div>
-      <div class="flex items-center gap-3">
+      <div class="flex gap-3 items-center flex-wrap">
         <button class="btn btn-secondary">Запросить помощь ментора</button>
         <button class="btn btn-primary">Сдать работу →</button>
       </div>
     </div>
 
-    <!-- Progress bar -->
-    <div style="margin-bottom:2rem;">
-      <div class="flex items-center justify-between mb-2">
-        <span style="font-size:0.78rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--text-muted);">Прогресс выполнения</span>
-        <span style="font-family:var(--font-display); font-size:0.85rem; font-weight:700; color:var(--forge);">65%</span>
+    <!-- Progress bar with milestones -->
+    <div class="mb-5">
+      <div class="flex justify-between items-center mb-2">
+        <span class="text-xs text-muted font-bold" style="letter-spacing:0.06em;text-transform:uppercase;">Прогресс выполнения</span>
+        <span class="font-display font-bold" style="color:var(--forge);font-size:0.88rem;">65%</span>
       </div>
-      <div class="progress-bar" style="height:8px; border-radius:4px;">
-        <div class="progress-fill" style="width:65%; border-radius:4px;"></div>
-      </div>
-      <!-- Milestones -->
-      <div class="flex justify-between mt-2" style="font-size:0.68rem; color:var(--text-muted);">
+      <div class="progress-bar" style="height:8px;border-radius:4px;margin-bottom:0.6rem;"><div class="progress-fill" style="width:65%;border-radius:4px;"></div></div>
+      <div class="flex justify-between" style="font-size:0.68rem;">
         <span style="color:var(--status-done);">✓ Принял ТЗ</span>
         <span style="color:var(--status-done);">✓ Макет Figma</span>
-        <span style="color:var(--spark);">◉ Вёрстка</span>
-        <span>□ Тестирование</span>
-        <span>□ Сдача</span>
+        <span style="color:var(--forge);font-weight:600;">● Вёрстка</span>
+        <span class="text-muted">□ Тестирование</span>
+        <span class="text-muted">□ Сдача</span>
       </div>
     </div>
 
-    <!-- Main layout: TZ + chat + sidebar -->
-    <div style="display:grid; grid-template-columns:1fr 340px; gap:1.5rem;">
+    <!-- Main grid: TZ + sidebar -->
+    <div style="display:grid;grid-template-columns:1fr 320px;gap:1.25rem;">
 
-      <!-- Left: TZ + submission -->
+      <!-- Left -->
       <div class="flex-col gap-4">
 
         <!-- TZ Card -->
@@ -108,91 +120,52 @@
             <span class="user-role-badge badge-ai">✦ AI-сгенерировано</span>
           </div>
           <div class="card-body">
-
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:1.5rem;">
-              <div>
-                <div class="form-label">Цель задачи</div>
-                <div style="font-size:0.88rem; line-height:1.5;">Создать современный адаптивный лендинг для кофейни «Утро» с акцентом на онлайн-бронирование столиков и меню.</div>
+            <!-- Goal + Result -->
+            <div class="grid-2 mb-4">
+              <div><div class="form-label">Цель задачи</div><div class="text-sm" style="line-height:1.55;">Современный адаптивный лендинг с акцентом на онлайн-бронирование столиков.</div></div>
+              <div><div class="form-label">Ожидаемый результат</div><div class="text-sm" style="line-height:1.55;">HTML/CSS лендинг, адаптивный (320–1920px), с рабочей формой и анимацией.</div></div>
+            </div>
+            <hr class="divider">
+            <!-- Meta strip -->
+            <div class="info-strip">
+              <div class="info-cell">
+                <div class="info-cell-label">Стек</div>
+                <div class="tag-row mt-1"><span class="tag tag-forge">Figma</span><span class="tag tag-blue">HTML</span><span class="tag tag-blue">CSS</span><span class="tag tag-green">JS</span></div>
               </div>
-              <div>
-                <div class="form-label">Ожидаемый результат</div>
-                <div style="font-size:0.88rem; line-height:1.5;">HTML/CSS лендинг, адаптивный (320–1920px), с рабочей формой бронирования и анимацией.</div>
+              <div class="info-cell">
+                <div class="info-cell-label">Срок</div>
+                <div class="text-sm font-medium mt-1">18 марта 2025</div>
+                <div style="font-size:0.72rem;color:var(--spark);margin-top:2px;">Осталось 5 дней</div>
+              </div>
+              <div class="info-cell">
+                <div class="info-cell-label">Вознаграждение</div>
+                <div class="font-display font-bold mt-1" style="color:var(--spark);font-size:1.2rem;">1 200₽</div>
               </div>
             </div>
-
-            <hr class="divider">
-
-            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.5rem;">
-              <div>
-                <div class="form-label">Стек / Инструменты</div>
-                <div class="task-tags mt-2">
-                  <span class="tag tag-primary">Figma</span>
-                  <span class="tag tag-blue">HTML</span>
-                  <span class="tag tag-blue">CSS</span>
-                  <span class="tag tag-green">JavaScript</span>
-                </div>
-              </div>
-              <div>
-                <div class="form-label">Срок</div>
-                <div style="font-size:0.9rem; font-weight:500; margin-top:0.5rem;">18 марта 2025</div>
-                <div style="font-size:0.75rem; color:var(--spark); margin-top:0.25rem;">Осталось 5 дней</div>
-              </div>
-              <div>
-                <div class="form-label">Вознаграждение</div>
-                <div style="font-family:var(--font-display); font-size:1.2rem; font-weight:900; color:var(--spark); margin-top:0.5rem;">1 200₽</div>
-              </div>
-            </div>
-
-            <hr class="divider">
-
+            <!-- Checklist -->
             <div class="form-label mb-3">Критерии приёмки</div>
-            <div style="display:flex; flex-direction:column; gap:0.5rem;">
-              <div style="display:flex; align-items:center; gap:0.75rem; padding:0.6rem 0.9rem; background:var(--bg-raised); border-radius:var(--radius-sm);">
-                <input type="checkbox" checked style="width:auto; background:none; border:none; accent-color:var(--forge);"> 
-                <span style="font-size:0.85rem;">Сайт открывается без ошибок в консоли</span>
-              </div>
-              <div style="display:flex; align-items:center; gap:0.75rem; padding:0.6rem 0.9rem; background:var(--bg-raised); border-radius:var(--radius-sm);">
-                <input type="checkbox" checked style="width:auto; background:none; border:none; accent-color:var(--forge);">
-                <span style="font-size:0.85rem;">Адаптивность: корректный вид на 320px, 768px, 1280px</span>
-              </div>
-              <div style="display:flex; align-items:center; gap:0.75rem; padding:0.6rem 0.9rem; background:var(--bg-raised); border-radius:var(--radius-sm);">
-                <input type="checkbox" checked style="width:auto; background:none; border:none; accent-color:var(--forge);">
-                <span style="font-size:0.85rem;">Форма бронирования: все поля, валидация, отправка</span>
-              </div>
-              <div style="display:flex; align-items:center; gap:0.75rem; padding:0.6rem 0.9rem; background:var(--bg-raised); border-radius:var(--radius-sm);">
-                <input type="checkbox" style="width:auto; background:none; border:none; accent-color:var(--forge);">
-                <span style="font-size:0.85rem; color:var(--text-secondary);">Страница скорость: Lighthouse ≥ 80</span>
-              </div>
-              <div style="display:flex; align-items:center; gap:0.75rem; padding:0.6rem 0.9rem; background:var(--bg-raised); border-radius:var(--radius-sm);">
-                <input type="checkbox" style="width:auto; background:none; border:none; accent-color:var(--forge);">
-                <span style="font-size:0.85rem; color:var(--text-secondary);">Ментор подтвердил соответствие макету Figma</span>
-              </div>
-            </div>
-
+            <div class="checklist-item"><input type="checkbox" checked> <span class="text-sm">Сайт открывается без ошибок в консоли</span></div>
+            <div class="checklist-item"><input type="checkbox" checked> <span class="text-sm">Адаптивность: 320px, 768px, 1280px</span></div>
+            <div class="checklist-item"><input type="checkbox" checked> <span class="text-sm">Форма бронирования: поля, валидация, отправка</span></div>
+            <div class="checklist-item"><input type="checkbox"> <span class="text-sm text-muted">Lighthouse Performance ≥ 80</span></div>
+            <div class="checklist-item"><input type="checkbox"> <span class="text-sm text-muted">Ментор подтвердил соответствие макету Figma</span></div>
           </div>
         </div>
 
-        <!-- Submit work -->
+        <!-- Submit form -->
         <div class="card">
           <div class="card-header">
             <span class="card-title">Сдача работы</span>
             <span class="text-xs text-muted">Ментор проверит перед отправкой заказчику</span>
           </div>
           <div class="card-body">
-            <div class="form-group">
-              <label class="form-label">Ссылка на результат</label>
-              <input type="url" placeholder="https://github.com/username/repo или figma.com/...">
-              <div class="form-hint">GitHub, Figma, Google Drive или любая другая публичная ссылка</div>
+            <div class="form-group"><label class="form-label">Ссылка на результат</label><input type="url" placeholder="https://github.com/username/repo или figma.com/..."><div class="form-hint">GitHub, Figma, Google Drive — любая публичная ссылка</div></div>
+            <div class="form-group"><label class="form-label">Комментарий к сдаче</label><textarea rows="3" placeholder="Что сделано, на что обратить внимание, были ли отступления от ТЗ..."></textarea></div>
+            <div class="ai-promo mb-4" style="padding:0.75rem 1rem;">
+              <div class="ai-promo-head" style="font-size:0.68rem;margin-bottom:0.35rem;">✦ После сдачи</div>
+              <p style="font-size:0.78rem;margin-bottom:0;">AI запустит ревью и подготовит отчёт для ментора. Smart-Портфолио создаст описание кейса автоматически.</p>
             </div>
-            <div class="form-group">
-              <label class="form-label">Комментарий к сдаче</label>
-              <textarea rows="3" placeholder="Расскажите, что сделано, что нужно проверить, были ли отступления от ТЗ..."></textarea>
-            </div>
-            <div style="padding:1rem; background:var(--forge-dim); border:1px solid var(--forge-border); border-radius:var(--radius-sm); margin-bottom:1.25rem; font-size:0.82rem; color:var(--text-secondary); display:flex; align-items:center; gap:0.75rem;">
-              <span style="font-size:1rem;">✦</span>
-              После сдачи AI автоматически запустит ревью работы и подготовит отчёт для ментора.
-            </div>
-            <div class="flex gap-3">
+            <div class="flex gap-3 flex-wrap">
               <button class="btn btn-primary">Сдать на проверку ментору</button>
               <button class="btn btn-ghost">Сохранить черновик</button>
             </div>
@@ -201,118 +174,76 @@
 
       </div>
 
-      <!-- Right sidebar: chat + mentor + info -->
+      <!-- Right sidebar -->
       <div class="flex-col gap-4">
 
         <!-- Participants -->
         <div class="card">
           <div class="card-header"><span class="card-title">Участники</span></div>
-          <div class="card-body" style="padding:1rem;">
-            <div style="display:flex; flex-direction:column; gap:0.75rem;">
-              <div class="flex items-center gap-2">
-                <div class="avatar avatar-sm avatar-forge">ТК</div>
-                <div style="flex:1">
-                  <div style="font-size:0.82rem; font-weight:500;">ООО «ТехКафе»</div>
-                  <div style="font-size:0.7rem; color:var(--text-muted);">Заказчик · Верифицирован ✓</div>
-                </div>
-                <span class="status status-done" style="font-size:0.6rem;">Онлайн</span>
-              </div>
-              <div class="flex items-center gap-2">
-                <div class="avatar avatar-sm avatar-purple">СМ</div>
-                <div style="flex:1">
-                  <div style="font-size:0.82rem; font-weight:500;">Михайлова С.В.</div>
-                  <div style="font-size:0.7rem; color:var(--text-muted);">Ментор · Кафедра дизайна</div>
-                </div>
-                <span class="status status-done" style="font-size:0.6rem;">Онлайн</span>
-              </div>
-              <div class="flex items-center gap-2">
-                <div class="avatar avatar-sm avatar-steel">АК</div>
-                <div style="flex:1">
-                  <div style="font-size:0.82rem; font-weight:500;">Козлова А. (вы)</div>
-                  <div style="font-size:0.7rem; color:var(--text-muted);">Исполнитель · Студент</div>
-                </div>
-              </div>
+          <div class="card-body" style="padding:0.85rem 1.25rem;">
+            <div class="participant-item">
+              <div class="avatar avatar-sm av-forge">ТК</div>
+              <div class="flex-1"><div class="text-sm font-medium">ООО «ТехКафе»</div><div class="text-xs text-muted">Заказчик · Верифицирован ✓</div></div>
+              <span class="status status-done" style="font-size:0.58rem;">Онлайн</span>
+            </div>
+            <div class="participant-item">
+              <div class="avatar avatar-sm av-purple">СМ</div>
+              <div class="flex-1"><div class="text-sm font-medium">Михайлова С.В.</div><div class="text-xs text-muted">Ментор · Кафедра дизайна</div></div>
+              <span class="status status-done" style="font-size:0.58rem;">Онлайн</span>
+            </div>
+            <div class="participant-item">
+              <div class="avatar avatar-sm av-steel">АК</div>
+              <div class="flex-1"><div class="text-sm font-medium">Козлова А. (вы)</div><div class="text-xs text-muted">Исполнитель</div></div>
             </div>
           </div>
         </div>
 
         <!-- Chat -->
-        <div class="card" style="flex:1;">
+        <div class="card flex-col" style="flex:1;min-height:280px;">
           <div class="card-header"><span class="card-title">Чат по задаче</span></div>
-          <div style="display:flex; flex-direction:column; height:320px;">
-            <div class="chat-messages" style="flex:1; padding:1rem; overflow-y:auto; display:flex; flex-direction:column; gap:0.6rem;">
-
-              <div style="text-align:center; font-size:0.68rem; color:var(--text-muted); padding:0.5rem 0;">13 марта</div>
-
-              <div class="chat-msg incoming">
-                <div style="font-size:0.65rem; color:var(--text-muted); margin-bottom:0.2rem;">ТехКафе (Заказчик)</div>
-                <div class="chat-msg-text">Алёна, можете начинать! ТЗ согласовано с ментором. Удачи 🙂</div>
-                <div class="chat-msg-meta">10:15</div>
-              </div>
-
-              <div style="text-align:center; font-size:0.68rem; color:var(--text-muted); padding:0.5rem 0;">Сегодня</div>
-
-              <div class="chat-msg incoming">
-                <div style="font-size:0.65rem; color:var(--text-muted); margin-bottom:0.2rem;">Михайлова С.В. (Ментор)</div>
-                <div class="chat-msg-text">Алёна, посмотри на мобильную версию — отступы на 320px ломаются. Исправь до пятницы.</div>
-                <div class="chat-msg-meta">14:22</div>
-              </div>
-
-              <div class="chat-msg outgoing">
-                <div class="chat-msg-text">Поняла, уже нашла проблему! Исправлю через час 🙏</div>
-                <div class="chat-msg-meta">14:37</div>
-              </div>
-
-            </div>
-            <div class="chat-input-bar" style="padding:0.75rem 1rem;">
-              <input type="text" placeholder="Сообщение участникам..." style="border-radius:var(--radius-sm);">
-              <button class="btn btn-primary btn-sm">→</button>
-            </div>
+          <div class="chat-messages" style="flex:1;max-height:220px;padding:0.85rem;">
+            <div class="chat-date-divider">13 марта</div>
+            <div class="chat-msg incoming"><div class="chat-msg-sender">ТехКафе (Заказчик)</div><div class="chat-msg-bubble">Алёна, можете начинать! ТЗ согласовано с ментором 🙂</div><div class="chat-msg-time">10:15</div></div>
+            <div class="chat-date-divider">Сегодня</div>
+            <div class="chat-msg incoming"><div class="chat-msg-sender">Михайлова С.В. (Ментор)</div><div class="chat-msg-bubble">Алёна, отступы на 320px ломаются. Исправь до пятницы.</div><div class="chat-msg-time">14:22</div></div>
+            <div class="chat-msg outgoing"><div class="chat-msg-bubble">Поняла, уже нашла! Исправлю через час 🙏</div><div class="chat-msg-time">14:37</div></div>
+          </div>
+          <div class="chat-input-bar" style="padding:0.6rem 1rem;">
+            <input type="text" placeholder="Сообщение..." style="border-radius:var(--radius-md);">
+            <button class="btn btn-primary btn-sm">→</button>
           </div>
         </div>
 
         <!-- Timeline -->
         <div class="card">
-          <div class="card-header"><span class="card-title">История</span></div>
-          <div class="card-body" style="padding:1rem;">
-            <div style="display:flex; flex-direction:column; gap:0;">
-              <div style="display:flex; gap:0.75rem; padding-bottom:0.75rem; position:relative;">
-                <div style="width:20px; height:20px; border-radius:50%; background:var(--status-done); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:0.65rem; color:var(--bg-base);">✓</div>
-                <div>
-                  <div style="font-size:0.82rem; font-weight:500;">Задача принята</div>
-                  <div style="font-size:0.7rem; color:var(--text-muted);">13 марта · 10:00</div>
-                </div>
-              </div>
-              <div style="display:flex; gap:0.75rem; padding-bottom:0.75rem;">
-                <div style="width:20px; height:20px; border-radius:50%; background:var(--status-done); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:0.65rem; color:var(--bg-base);">✓</div>
-                <div>
-                  <div style="font-size:0.82rem; font-weight:500;">Макет Figma готов</div>
-                  <div style="font-size:0.7rem; color:var(--text-muted);">14 марта · 18:30</div>
-                </div>
-              </div>
-              <div style="display:flex; gap:0.75rem; padding-bottom:0.75rem;">
-                <div style="width:20px; height:20px; border-radius:50%; background:var(--forge); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:0.65rem; color:#fff;">●</div>
-                <div>
-                  <div style="font-size:0.82rem; font-weight:500; color:var(--forge);">Вёрстка (сейчас)</div>
-                  <div style="font-size:0.7rem; color:var(--text-muted);">Ведётся работа</div>
-                </div>
-              </div>
-              <div style="display:flex; gap:0.75rem; padding-bottom:0.75rem; opacity:0.4;">
-                <div style="width:20px; height:20px; border-radius:50%; border:1.5px solid var(--border); flex-shrink:0;"></div>
-                <div><div style="font-size:0.82rem;">Тестирование</div></div>
-              </div>
-              <div style="display:flex; gap:0.75rem; opacity:0.4;">
-                <div style="width:20px; height:20px; border-radius:50%; border:1.5px solid var(--border); flex-shrink:0;"></div>
-                <div><div style="font-size:0.82rem;">Сдача · Получение оплаты</div></div>
-              </div>
-            </div>
+          <div class="card-header"><span class="card-title">История задачи</span></div>
+          <div class="card-body" style="padding:0.85rem 1.25rem;">
+            <div class="milestone-row"><div class="ms-dot ms-dot-done">✓</div><div><div class="text-sm font-medium">Задача принята</div><div class="text-xs text-muted">13 марта · 10:00</div></div></div>
+            <div class="milestone-row"><div class="ms-dot ms-dot-done">✓</div><div><div class="text-sm font-medium">Макет Figma готов</div><div class="text-xs text-muted">14 марта · 18:30</div></div></div>
+            <div class="milestone-row"><div class="ms-dot ms-dot-active">●</div><div><div class="text-sm font-medium" style="color:var(--forge);">Вёрстка (сейчас)</div><div class="text-xs text-muted">Ведётся работа</div></div></div>
+            <div class="milestone-row" style="opacity:0.4;"><div class="ms-dot ms-dot-todo"></div><div><div class="text-sm">Тестирование</div></div></div>
+            <div class="milestone-row" style="opacity:0.4;"><div class="ms-dot ms-dot-todo"></div><div><div class="text-sm">Сдача · Оплата</div></div></div>
           </div>
         </div>
 
       </div>
     </div>
+  </div>
+</main>
 
-  </main>
+<nav class="bottom-nav">
+  <div class="bn-item" onclick="location.href='dashboard-student.html'"><span class="bn-icon">⊞</span><span class="bn-label">Главная</span></div>
+  <div class="bn-item active"><span class="bn-icon">◈</span><span class="bn-label">Задачи</span><span class="bn-badge">3</span></div>
+  <div class="bn-item"><span class="bn-icon">◉</span><span class="bn-label">Портфолио</span></div>
+  <div class="bn-item"><span class="bn-icon">✉</span><span class="bn-label">Чат</span><span class="bn-badge">2</span></div>
+  <div class="bn-item"><span class="bn-icon">👤</span><span class="bn-label">Профиль</span></div>
+</nav>
 </div>
+
+<script>
+(function(){const s=localStorage.getItem('sf-theme')||'light';document.documentElement.setAttribute('data-theme',s);})();
+function toggleTheme(){const h=document.documentElement;const c=h.getAttribute('data-theme');const n=c==='dark'?'light':'dark';h.setAttribute('data-theme',n);localStorage.setItem('sf-theme',n);}
+window.addEventListener('DOMContentLoaded',()=>{setTimeout(()=>{document.getElementById('skeleton').classList.remove('active');document.getElementById('mainPage').classList.add('loaded');},700);});
+</script>
 </body>
 </html>
