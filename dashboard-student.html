@@ -1,425 +1,268 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Дашборд студента — SkillForge</title>
 <link rel="stylesheet" href="style.css">
 <style>
-.portfolio-case {
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  transition: border-color 0.2s;
-}
-.portfolio-case:hover { border-color: var(--border-hover); }
-.case-img {
-  height: 120px;
-  background: linear-gradient(135deg, var(--bg-raised), var(--bg-overlay));
-  display: flex; align-items: center; justify-content: center;
-  font-size: 2.5rem; border-bottom: 1px solid var(--border);
-}
-.case-body { padding: 1rem; }
-.case-name { font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; }
-.case-comp { font-size: 0.75rem; color: var(--text-muted); }
-
-.mentor-card {
-  background: var(--bg-raised);
-  border-radius: var(--radius-md);
-  padding: 1rem;
-  display: flex; align-items: center; gap: 0.75rem;
-}
-.skill-bar-row { display: flex; flex-direction: column; gap: 0.6rem; }
-.skill-bar-item {}
-.skill-bar-label {
-  display: flex; justify-content: space-between;
-  font-size: 0.75rem; margin-bottom: 0.3rem;
-}
-.skill-bar-label span:last-child { color: var(--text-muted); }
+.skill-bar-item{margin-bottom:0.7rem;}
+.skill-bar-label{display:flex;justify-content:space-between;font-size:0.75rem;margin-bottom:0.3rem;}
+.case-card{border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;transition:border-color var(--transition),box-shadow var(--transition);cursor:pointer;}
+.case-card:hover{border-color:var(--forge-border);box-shadow:var(--shadow-md);}
+.case-thumb{height:100px;display:flex;align-items:center;justify-content:center;font-size:2.2rem;background:var(--bg-raised);border-bottom:1px solid var(--border);}
+.case-foot{padding:0.75rem;}
+.case-name{font-size:0.82rem;font-weight:500;margin-bottom:0.4rem;}
+.mentor-strip{display:flex;align-items:center;gap:0.75rem;padding:0.85rem;background:var(--bg-raised);border-radius:var(--radius-md);border:1px solid var(--border);}
+.mentor-msg{margin-top:0.75rem;padding:0.75rem 0.9rem;background:var(--forge-dim);border-left:2px solid var(--forge);border-radius:0 var(--radius-sm) var(--radius-sm) 0;font-size:0.82rem;color:var(--text-secondary);line-height:1.5;}
+.sk-page{display:none;}
+.sk-page.active{display:block;}
+.main-page{opacity:0;transition:opacity 0.3s;}
+.main-page.loaded{opacity:1;}
 </style>
 </head>
 <body>
 <div class="app-shell">
-
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="sidebar-logo">
-      <a href="#">Skill<span>Forge</span></a>
+<aside class="sidebar">
+  <div class="sidebar-logo"><a href="#">Skill<span>Forge</span></a></div>
+  <div class="sidebar-user">
+    <div class="user-card">
+      <div class="avatar avatar-md av-steel">АК</div>
+      <div>
+        <div class="user-name">Алёна Козлова</div>
+        <div class="user-org">Колледж дизайна №10</div>
+        <span class="user-role-badge badge-student">Студент · 3 курс</span>
+      </div>
     </div>
-    <div class="sidebar-user">
-      <div class="user-card">
-        <div class="avatar avatar-md avatar-steel">АК</div>
-        <div>
-          <div class="user-name">Алёна Козлова</div>
-          <div class="user-role">Колледж дизайна №10</div>
-          <span class="user-role-badge badge-student">Студент · 3 курс</span>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Главное</div>
+    <a href="dashboard-student.html" class="nav-item active"><span class="nav-icon">⊞</span> Дашборд</a>
+    <a href="#" class="nav-item"><span class="nav-icon">◈</span> Мои задачи <span class="nav-badge">3</span></a>
+    <a href="#" class="nav-item"><span class="nav-icon">◉</span> Портфолио</a>
+    <a href="#" class="nav-item"><span class="nav-icon">◎</span> Мэтчинг <span class="nav-badge-soft">7</span></a>
+    <div class="nav-section-label">Коммуникация</div>
+    <a href="#" class="nav-item"><span class="nav-icon">✉</span> Чат <span class="nav-badge">2</span></a>
+    <a href="#" class="nav-item"><span class="nav-icon">⊛</span> Ментор</a>
+    <a href="#" class="nav-item"><span class="nav-icon">◷</span> Уведомления</a>
+    <div class="nav-section-label">AI-инструменты</div>
+    <a href="#" class="nav-item"><span class="nav-icon">✦</span> Smart-Портфолио <span class="user-role-badge badge-ai" style="margin-left:auto;margin-top:0;font-size:0.5rem;">AI</span></a>
+    <a href="#" class="nav-item"><span class="nav-icon">◈</span> База знаний AI</a>
+    <a href="#" class="nav-item"><span class="nav-icon">⊕</span> AI-мэтчинг</a>
+  </nav>
+  <div class="sidebar-bottom">
+    <a href="#" class="nav-item"><span class="nav-icon">⚙</span> Настройки</a>
+    <a href="../index.html" class="nav-item text-muted"><span class="nav-icon">←</span> Выйти</a>
+  </div>
+</aside>
+
+<header class="topbar">
+  <div class="topbar-breadcrumb"><span class="crumb-active">Дашборд студента</span></div>
+  <div class="topbar-actions">
+    <button class="theme-toggle" onclick="toggleTheme()" title="Тема">
+      <span class="icon-moon">🌙</span><span class="icon-sun">☀️</span>
+    </button>
+    <button class="icon-btn">🔔<span class="dot"></span></button>
+    <button class="icon-btn">💬</button>
+    <div class="avatar avatar-sm av-steel">АК</div>
+  </div>
+</header>
+
+<main class="main-content" style="position:relative;">
+
+  <!-- SKELETON -->
+  <div class="sk-page active" id="skeleton">
+    <div class="flex justify-between items-center mb-8">
+      <div class="flex-col gap-2">
+        <div class="skeleton sk-text-sm" style="width:100px;"></div>
+        <div class="skeleton" style="width:230px;height:28px;border-radius:4px;"></div>
+        <div class="skeleton sk-text-sm" style="width:260px;margin-top:4px;"></div>
+      </div>
+      <div class="skeleton sk-btn" style="width:130px;"></div>
+    </div>
+    <div class="stats-row mb-5">
+      <div class="stat-card"><div class="skeleton sk-text-sm mb-2" style="width:80px;"></div><div class="skeleton" style="width:50px;height:30px;border-radius:4px;"></div></div>
+      <div class="stat-card"><div class="skeleton sk-text-sm mb-2" style="width:80px;"></div><div class="skeleton" style="width:50px;height:30px;border-radius:4px;"></div></div>
+      <div class="stat-card"><div class="skeleton sk-text-sm mb-2" style="width:80px;"></div><div class="skeleton" style="width:50px;height:30px;border-radius:4px;"></div></div>
+      <div class="stat-card"><div class="skeleton sk-text-sm mb-2" style="width:80px;"></div><div class="skeleton" style="width:50px;height:30px;border-radius:4px;"></div></div>
+    </div>
+    <div class="grid-2 mb-5">
+      <div class="card" style="min-height:280px;">
+        <div class="card-header"><div class="skeleton sk-text" style="width:120px;"></div></div>
+        <div class="card-body flex-col gap-3">
+          <div class="skeleton" style="height:72px;border-radius:var(--radius-sm);"></div>
+          <div class="skeleton" style="height:72px;border-radius:var(--radius-sm);"></div>
+          <div class="skeleton" style="height:72px;border-radius:var(--radius-sm);"></div>
         </div>
       </div>
-    </div>
-    <nav class="sidebar-nav">
-      <div class="nav-section-label">Главное</div>
-      <a href="dashboard-student.html" class="nav-item active">
-        <span class="nav-icon">⊞</span> Дашборд
-      </a>
-      <a href="tasks-student.html" class="nav-item">
-        <span class="nav-icon">◈</span> Задачи
-        <span class="nav-badge">3</span>
-      </a>
-      <a href="#" class="nav-item">
-        <span class="nav-icon">◉</span> Портфолио
-      </a>
-      <a href="#" class="nav-item">
-        <span class="nav-icon">◎</span> Мэтчинг
-        <span class="nav-badge" style="background:var(--spark)">7</span>
-      </a>
-
-      <div class="nav-section-label">Коммуникация</div>
-      <a href="#" class="nav-item">
-        <span class="nav-icon">✉</span> Чат
-        <span class="nav-badge">2</span>
-      </a>
-      <a href="#" class="nav-item">
-        <span class="nav-icon">⊛</span> Ментор
-      </a>
-      <a href="#" class="nav-item">
-        <span class="nav-icon">◷</span> Уведомления
-      </a>
-
-      <div class="nav-section-label">AI-инструменты</div>
-      <a href="#" class="nav-item">
-        <span class="nav-icon">✦</span> Smart-Портфолио
-        <span class="user-role-badge badge-ai" style="margin-left:auto;margin-top:0;">AI</span>
-      </a>
-      <a href="#" class="nav-item">
-        <span class="nav-icon">◈</span> База знаний AI
-      </a>
-      <a href="#" class="nav-item">
-        <span class="nav-icon">⊕</span> Мэтчинг AI
-      </a>
-    </nav>
-    <div class="sidebar-bottom">
-      <a href="#" class="nav-item">
-        <span class="nav-icon">⚙</span> Настройки
-      </a>
-      <a href="../index.html" class="nav-item" style="color:var(--text-muted)">
-        <span class="nav-icon">←</span> Выйти
-      </a>
-    </div>
-  </aside>
-
-  <!-- TOPBAR -->
-  <header class="topbar">
-    <div class="topbar-title">Дашборд студента</div>
-    <div class="topbar-actions">
-      <button class="icon-btn" title="Уведомления">
-        🔔<span class="dot"></span>
-      </button>
-      <button class="icon-btn" title="Чат">💬</button>
-      <div class="avatar avatar-sm avatar-steel">АК</div>
-    </div>
-  </header>
-
-  <!-- MAIN -->
-  <main class="main-content">
-
-    <!-- Page header -->
-    <div class="page-header">
-      <div class="page-header-left">
-        <div class="page-title-sm">Добро пожаловать</div>
-        <h1 class="page-title">Привет, Алёна 👋</h1>
-        <p class="page-subtitle">3 активные задачи · 7 новых рекомендаций мэтчинга</p>
-      </div>
-      <a href="tasks-student.html" class="btn btn-primary">+ Найти задачи</a>
-    </div>
-
-    <!-- Stats -->
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-label">Выполнено задач</div>
-        <div class="stat-value">12</div>
-        <div class="stat-delta up">↑ +3 за месяц</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Активных задач</div>
-        <div class="stat-value" style="color:var(--spark)">3</div>
-        <div class="stat-delta">Дедлайн ближайший: 5 дней</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Средняя оценка</div>
-        <div class="stat-value" style="color:var(--status-done)">4.8</div>
-        <div class="stat-delta up">↑ +0.2 за месяц</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Навыков в профиле</div>
-        <div class="stat-value">18</div>
-        <div class="stat-delta up">↑ +4 новых</div>
-      </div>
-    </div>
-
-    <!-- Two-column layout -->
-    <div class="grid-2 mb-8">
-
-      <!-- Active tasks -->
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">Активные задачи</span>
-          <a href="tasks-student.html" class="btn btn-ghost btn-sm">Все →</a>
-        </div>
-        <div class="card-body-flush">
-          <!-- Task 1 -->
-          <div style="padding:1rem 1.5rem; border-bottom:1px solid var(--border); cursor:pointer;" onmouseover="this.style.background='var(--bg-raised)'" onmouseout="this.style.background=''">
-            <div class="flex items-center justify-between mb-2">
-              <div class="flex items-center gap-3">
-                <span class="status status-progress">В работе</span>
-                <span class="text-xs text-muted">до 18 марта</span>
-              </div>
-              <span class="text-xs text-muted">⭐ ×1200₽</span>
-            </div>
-            <div style="font-size:0.88rem; font-weight:500; margin-bottom:0.4rem;">Редизайн лендинга для кофейни «Утро»</div>
-            <div style="font-size:0.78rem; color:var(--text-muted); margin-bottom:0.6rem;">Figma → HTML/CSS. Адаптив + форма бронирования.</div>
-            <div class="progress-bar">
-              <div class="progress-fill" style="width:65%"></div>
-            </div>
-            <div style="font-size:0.68rem; color:var(--text-muted); margin-top:0.3rem;">65% выполнено</div>
-          </div>
-          <!-- Task 2 -->
-          <div style="padding:1rem 1.5rem; border-bottom:1px solid var(--border); cursor:pointer;" onmouseover="this.style.background='var(--bg-raised)'" onmouseout="this.style.background=''">
-            <div class="flex items-center justify-between mb-2">
-              <div class="flex items-center gap-3">
-                <span class="status status-review">На проверке</span>
-                <span class="text-xs text-muted">до 20 марта</span>
-              </div>
-              <span class="text-xs text-muted">⭐ ×800₽</span>
-            </div>
-            <div style="font-size:0.88rem; font-weight:500; margin-bottom:0.4rem;">Логотип и брендбук для барбершопа</div>
-            <div style="font-size:0.78rem; color:var(--text-muted); margin-bottom:0.6rem;">Ментор проверяет работу</div>
-            <div class="progress-bar">
-              <div class="progress-fill green" style="width:90%"></div>
-            </div>
-            <div style="font-size:0.68rem; color:var(--text-muted); margin-top:0.3rem;">Ожидание подтверждения</div>
-          </div>
-          <!-- Task 3 -->
-          <div style="padding:1rem 1.5rem; cursor:pointer;" onmouseover="this.style.background='var(--bg-raised)'" onmouseout="this.style.background=''">
-            <div class="flex items-center justify-between mb-2">
-              <div class="flex items-center gap-3">
-                <span class="status status-new">Новая</span>
-                <span class="text-xs text-muted">до 28 марта</span>
-              </div>
-              <span class="text-xs text-muted">⭐ ×1500₽</span>
-            </div>
-            <div style="font-size:0.88rem; font-weight:500; margin-bottom:0.4rem;">Иллюстрации для детского приложения</div>
-            <div style="font-size:0.78rem; color:var(--text-muted); margin-bottom:0.6rem;">6 персонажей в плоском стиле, Procreate/Figma</div>
-            <div class="progress-bar">
-              <div class="progress-fill blue" style="width:5%"></div>
-            </div>
-            <div style="font-size:0.68rem; color:var(--text-muted); margin-top:0.3rem;">Изучение ТЗ</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right column -->
       <div class="flex-col gap-4">
+        <div class="card"><div class="card-header"><div class="skeleton sk-text" style="width:100px;"></div></div><div class="card-body"><div class="skeleton" style="height:80px;border-radius:var(--radius-sm);"></div></div></div>
+        <div class="card"><div class="card-header"><div class="skeleton sk-text" style="width:100px;"></div></div><div class="card-body flex-col gap-3"><div class="skeleton sk-text" style="width:100%;"></div><div class="skeleton sk-text" style="width:90%;"></div><div class="skeleton sk-text" style="width:75%;"></div><div class="skeleton sk-text" style="width:60%;"></div></div></div>
+      </div>
+    </div>
+  </div>
 
-        <!-- Mentor -->
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">Мой ментор</span>
-            <a href="#" class="btn btn-ghost btn-sm">Написать →</a>
+  <!-- MAIN PAGE -->
+  <div class="main-page" id="mainPage">
+    <div class="page-header">
+      <div>
+        <div class="page-eyebrow">Добро пожаловать</div>
+        <h1 class="page-title">Привет, Алёна 👋</h1>
+        <p class="page-subtitle">3 активные задачи · 7 рекомендаций AI-мэтчинга</p>
+      </div>
+      <a href="#" class="btn btn-primary">+ Найти задачи</a>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-label">Выполнено задач</div><div class="stat-value">12</div><div class="stat-delta up">↑ +3 за месяц</div></div>
+      <div class="stat-card"><div class="stat-label">Активных</div><div class="stat-value" style="color:var(--status-progress)">3</div><div class="stat-delta">Ближайший дедлайн: 5 д.</div></div>
+      <div class="stat-card"><div class="stat-label">Средняя оценка</div><div class="stat-value" style="color:var(--status-done)">4.8</div><div class="stat-delta up">↑ +0.2</div></div>
+      <div class="stat-card"><div class="stat-label">Навыки</div><div class="stat-value">18</div><div class="stat-delta up">↑ +4 новых</div></div>
+    </div>
+
+    <div class="grid-2 mb-5">
+      <!-- Tasks -->
+      <div class="card">
+        <div class="card-header"><span class="card-title">Активные задачи</span><a href="#" class="btn btn-ghost btn-sm">Все →</a></div>
+        <div class="card-body-flush">
+          <a href="task-detail.html" class="task-row flex-col" style="display:flex;color:inherit;">
+            <div class="task-row-top">
+              <div class="flex gap-2 items-center"><span class="status status-progress">В работе</span><span class="text-xs text-muted">до 18 марта</span></div>
+              <span class="font-medium" style="color:var(--spark);font-size:0.82rem;">1 200₽</span>
+            </div>
+            <div class="task-title">Редизайн лендинга для кофейни «Утро»</div>
+            <div class="task-desc">Figma → HTML/CSS. Адаптив + форма бронирования.</div>
+            <div class="progress-bar mb-1"><div class="progress-fill" style="width:65%"></div></div>
+            <div class="text-xs text-muted">65% выполнено</div>
+          </a>
+          <div class="task-row flex-col">
+            <div class="task-row-top">
+              <div class="flex gap-2 items-center"><span class="status status-review">На проверке</span><span class="text-xs text-muted">до 20 марта</span></div>
+              <span class="font-medium" style="color:var(--spark);font-size:0.82rem;">800₽</span>
+            </div>
+            <div class="task-title">Логотип и брендбук для барбершопа</div>
+            <div class="task-desc">Ментор проверяет работу.</div>
+            <div class="progress-bar mb-1"><div class="progress-fill pf-green" style="width:90%"></div></div>
+            <div class="text-xs text-muted">Ожидание подтверждения</div>
           </div>
-          <div class="card-body">
-            <div class="mentor-card">
-              <div class="avatar avatar-md avatar-purple">СМ</div>
-              <div style="flex:1">
-                <div style="font-size:0.9rem; font-weight:500;">Светлана Михайлова</div>
-                <div style="font-size:0.78rem; color:var(--text-muted);">Кафедра дизайна · Преп. визуальных коммуникаций</div>
-                <div class="flex items-center gap-2 mt-2">
-                  <span class="status status-done" style="font-size:0.6rem;">Онлайн</span>
-                  <span style="font-size:0.72rem; color:var(--text-muted);">Ответит в течение часа</span>
-                </div>
-              </div>
+          <div class="task-row flex-col">
+            <div class="task-row-top">
+              <div class="flex gap-2 items-center"><span class="status status-new">Новая</span><span class="text-xs text-muted">до 28 марта</span></div>
+              <span class="font-medium" style="color:var(--spark);font-size:0.82rem;">1 500₽</span>
             </div>
-            <div style="margin-top:1rem; padding:0.75rem; background:var(--bg-raised); border-radius:var(--radius-sm); font-size:0.82rem; color:var(--text-secondary); border-left:2px solid var(--forge);">
-              💬 «Алёна, посмотри на мобильную версию лендинга — отступы на 320px ломаются. Исправь до пятницы.»
-            </div>
+            <div class="task-title">Иллюстрации для детского приложения</div>
+            <div class="task-desc">6 персонажей, плоский стиль. Procreate/Figma.</div>
+            <div class="progress-bar mb-1"><div class="progress-fill pf-blue" style="width:5%"></div></div>
+            <div class="text-xs text-muted">Изучение ТЗ</div>
           </div>
         </div>
+      </div>
 
-        <!-- Skills -->
+      <!-- Right -->
+      <div class="flex-col gap-4">
         <div class="card">
-          <div class="card-header">
-            <span class="card-title">Топ навыки</span>
-            <a href="#" class="btn btn-ghost btn-sm">Все 18 →</a>
-          </div>
+          <div class="card-header"><span class="card-title">Мой ментор</span><a href="#" class="btn btn-ghost btn-sm">Написать →</a></div>
           <div class="card-body">
-            <div class="skill-bar-row">
-              <div class="skill-bar-item">
-                <div class="skill-bar-label"><span>Figma</span><span>12 проектов</span></div>
-                <div class="progress-bar"><div class="progress-fill" style="width:90%"></div></div>
-              </div>
-              <div class="skill-bar-item">
-                <div class="skill-bar-label"><span>HTML/CSS</span><span>8 проектов</span></div>
-                <div class="progress-bar"><div class="progress-fill blue" style="width:65%"></div></div>
-              </div>
-              <div class="skill-bar-item">
-                <div class="skill-bar-label"><span>Брендинг</span><span>5 проектов</span></div>
-                <div class="progress-bar"><div class="progress-fill purple" style="width:45%"></div></div>
-              </div>
-              <div class="skill-bar-item">
-                <div class="skill-bar-label"><span>Иллюстрация</span><span>3 проекта</span></div>
-                <div class="progress-bar"><div class="progress-fill green" style="width:28%"></div></div>
+            <div class="mentor-strip">
+              <div class="avatar avatar-md av-purple">СМ</div>
+              <div class="flex-1">
+                <div style="font-size:0.88rem;font-weight:500;">Светлана Михайлова</div>
+                <div class="text-xs text-muted">Кафедра дизайна</div>
+                <div class="flex gap-2 mt-2 items-center"><span class="status status-done" style="font-size:0.55rem;">Онлайн</span><span class="text-xs text-muted">Ответит за час</span></div>
               </div>
             </div>
+            <div class="mentor-msg">💬 «Алёна, посмотри мобильную версию — отступы на 320px ломаются. Исправь до пятницы.»</div>
           </div>
         </div>
-
+        <div class="card">
+          <div class="card-header"><span class="card-title">Топ навыки</span><a href="#" class="btn btn-ghost btn-sm">Все 18 →</a></div>
+          <div class="card-body">
+            <div class="skill-bar-item"><div class="skill-bar-label"><span>Figma</span><span class="text-muted">12</span></div><div class="progress-bar"><div class="progress-fill" style="width:90%"></div></div></div>
+            <div class="skill-bar-item"><div class="skill-bar-label"><span>HTML/CSS</span><span class="text-muted">8</span></div><div class="progress-bar"><div class="progress-fill pf-blue" style="width:65%"></div></div></div>
+            <div class="skill-bar-item"><div class="skill-bar-label"><span>Брендинг</span><span class="text-muted">5</span></div><div class="progress-bar"><div class="progress-fill pf-purple" style="width:45%"></div></div></div>
+            <div class="skill-bar-item"><div class="skill-bar-label"><span>Иллюстрация</span><span class="text-muted">3</span></div><div class="progress-bar"><div class="progress-fill pf-green" style="width:28%"></div></div></div>
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- Portfolio -->
-    <div class="card mb-8">
+    <div class="card mb-5">
       <div class="card-header">
         <span class="card-title">Портфолио</span>
-        <div class="flex items-center gap-2">
-          <span class="user-role-badge badge-ai">✨ AI-сборка</span>
-          <a href="#" class="btn btn-ghost btn-sm">Открыть →</a>
-        </div>
+        <div class="flex gap-2 items-center"><span class="user-role-badge badge-ai">✨ AI-сборка</span><a href="#" class="btn btn-ghost btn-sm">Открыть →</a></div>
       </div>
       <div class="card-body">
         <div class="grid-4">
-          <div class="portfolio-case">
-            <div class="case-img">☕</div>
-            <div class="case-body">
-              <div class="case-name">Лендинг «Утро»</div>
-              <div class="case-comp flex gap-1 mt-2 flex-wrap">
-                <span class="tag">Figma</span><span class="tag">HTML</span>
-              </div>
-            </div>
-          </div>
-          <div class="portfolio-case">
-            <div class="case-img" style="background:linear-gradient(135deg,#1e253a,#252d45);">💈</div>
-            <div class="case-body">
-              <div class="case-name">Брендбук барбершопа</div>
-              <div class="case-comp flex gap-1 mt-2 flex-wrap">
-                <span class="tag">Figma</span><span class="tag">Branding</span>
-              </div>
-            </div>
-          </div>
-          <div class="portfolio-case">
-            <div class="case-img" style="background:linear-gradient(135deg,#0f2027,#203a43);">🏪</div>
-            <div class="case-body">
-              <div class="case-name">UX-аудит интернет-магазина</div>
-              <div class="case-comp flex gap-1 mt-2 flex-wrap">
-                <span class="tag">UX</span><span class="tag">Research</span>
-              </div>
-            </div>
-          </div>
-          <div class="portfolio-case" style="border-style:dashed; display:flex; align-items:center; justify-content:center; min-height:160px; flex-direction:column; gap:0.5rem; color:var(--text-muted); cursor:pointer;" onmouseover="this.style.borderColor='var(--forge)'" onmouseout="this.style.borderColor='var(--border)'">
-            <div style="font-size:1.5rem; opacity:0.5;">+</div>
-            <div style="font-size:0.75rem;">Добавить кейс</div>
+          <div class="case-card"><div class="case-thumb">☕</div><div class="case-foot"><div class="case-name">Лендинг «Утро»</div><div class="tag-row mt-1"><span class="tag tag-forge">Figma</span><span class="tag tag-blue">HTML</span></div></div></div>
+          <div class="case-card"><div class="case-thumb" style="background:var(--bg-overlay);">💈</div><div class="case-foot"><div class="case-name">Брендбук барбершопа</div><div class="tag-row mt-1"><span class="tag tag-forge">Figma</span></div></div></div>
+          <div class="case-card"><div class="case-thumb" style="background:var(--bg-overlay);">🏪</div><div class="case-foot"><div class="case-name">UX-аудит</div><div class="tag-row mt-1"><span class="tag tag-purple">UX</span></div></div></div>
+          <div class="case-card" style="border-style:dashed;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0.4rem;color:var(--text-muted);min-height:150px;" onmouseover="this.style.borderColor='var(--forge)'" onmouseout="this.style.borderColor='var(--border)'">
+            <div style="font-size:1.5rem;opacity:0.4;">+</div><div class="text-xs">Добавить кейс</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Matching recommendations -->
+    <!-- Matching -->
     <div class="card">
       <div class="card-header">
-        <span class="card-title">Рекомендации AI-мэтчинга</span>
-        <div class="flex items-center gap-2">
-          <span class="status status-new">7 новых</span>
-          <a href="tasks-student.html" class="btn btn-ghost btn-sm">Смотреть все →</a>
-        </div>
+        <span class="card-title">AI-мэтчинг · Рекомендации</span>
+        <div class="flex gap-2 items-center"><span class="status status-new">7 новых</span><a href="#" class="btn btn-ghost btn-sm">Все →</a></div>
       </div>
-      <div class="card-body-flush">
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Задача</th>
-                <th>Заказчик</th>
-                <th>Навыки</th>
-                <th>Вознаграждение</th>
-                <th>Совпадение</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  <div style="font-weight:500; font-size:0.88rem;">Разработка UI-кита для SaaS</div>
-                  <div style="font-size:0.75rem; color:var(--text-muted);">Срок: 21 день</div>
-                </td>
-                <td>
-                  <div class="flex items-center gap-2">
-                    <div class="avatar avatar-sm avatar-forge">ТК</div>
-                    <span style="font-size:0.82rem;">ТехКафе</span>
-                  </div>
-                </td>
-                <td>
-                  <div class="task-tags">
-                    <span class="tag tag-primary">Figma</span>
-                    <span class="tag tag-blue">UX</span>
-                  </div>
-                </td>
-                <td><span style="color:var(--spark); font-weight:700;">2 400₽</span></td>
-                <td>
-                  <div style="font-family:var(--font-display); font-size:0.85rem; font-weight:900; color:var(--status-done);">96%</div>
-                </td>
-                <td><a href="#" class="btn btn-primary btn-sm">Откликнуться</a></td>
-              </tr>
-              <tr>
-                <td>
-                  <div style="font-weight:500; font-size:0.88rem;">Упаковка и этикетки для крафт-чая</div>
-                  <div style="font-size:0.75rem; color:var(--text-muted);">Срок: 14 дней</div>
-                </td>
-                <td>
-                  <div class="flex items-center gap-2">
-                    <div class="avatar avatar-sm" style="background:#2d4a22;">ЧЛ</div>
-                    <span style="font-size:0.82rem;">Чайный лист</span>
-                  </div>
-                </td>
-                <td>
-                  <div class="task-tags">
-                    <span class="tag tag-primary">Figma</span>
-                    <span class="tag">Packaging</span>
-                  </div>
-                </td>
-                <td><span style="color:var(--spark); font-weight:700;">1 800₽</span></td>
-                <td>
-                  <div style="font-family:var(--font-display); font-size:0.85rem; font-weight:900; color:var(--status-done);">89%</div>
-                </td>
-                <td><a href="#" class="btn btn-secondary btn-sm">Смотреть</a></td>
-              </tr>
-              <tr>
-                <td>
-                  <div style="font-weight:500; font-size:0.88rem;">Иллюстрации для блога о путешествиях</div>
-                  <div style="font-size:0.75rem; color:var(--text-muted);">Срок: 10 дней</div>
-                </td>
-                <td>
-                  <div class="flex items-center gap-2">
-                    <div class="avatar avatar-sm" style="background:#1e3a52;">БП</div>
-                    <span style="font-size:0.82rem;">Блог «Путь»</span>
-                  </div>
-                </td>
-                <td>
-                  <div class="task-tags">
-                    <span class="tag tag-purple">Illustration</span>
-                    <span class="tag">Procreate</span>
-                  </div>
-                </td>
-                <td><span style="color:var(--spark); font-weight:700;">900₽</span></td>
-                <td>
-                  <div style="font-family:var(--font-display); font-size:0.85rem; font-weight:900; color:var(--spark);">74%</div>
-                </td>
-                <td><a href="#" class="btn btn-secondary btn-sm">Смотреть</a></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Задача</th><th>Заказчик</th><th>Навыки</th><th>Оплата</th><th>Совп.</th><th></th></tr></thead>
+          <tbody>
+            <tr>
+              <td><div class="font-medium text-sm">Разработка UI-кита для SaaS</div><div class="text-xs text-muted">Срок: 21 день</div></td>
+              <td><div class="flex items-center gap-2"><div class="avatar avatar-xs av-forge">ТК</div><span class="text-sm">ТехКафе</span></div></td>
+              <td><div class="tag-row"><span class="tag tag-forge">Figma</span><span class="tag tag-blue">UX</span></div></td>
+              <td><span class="font-medium" style="color:var(--spark);">2 400₽</span></td>
+              <td><span class="font-display font-bold" style="color:var(--status-done);font-size:0.88rem;">96%</span></td>
+              <td><a href="#" class="btn btn-primary btn-sm">Откликнуться</a></td>
+            </tr>
+            <tr>
+              <td><div class="font-medium text-sm">Упаковка для крафт-чая</div><div class="text-xs text-muted">Срок: 14 дней</div></td>
+              <td><div class="flex items-center gap-2"><div class="avatar avatar-xs av-green">ЧЛ</div><span class="text-sm">Чайный лист</span></div></td>
+              <td><div class="tag-row"><span class="tag tag-forge">Figma</span><span class="tag">Packaging</span></div></td>
+              <td><span class="font-medium" style="color:var(--spark);">1 800₽</span></td>
+              <td><span class="font-display font-bold" style="color:var(--status-done);font-size:0.88rem;">89%</span></td>
+              <td><a href="#" class="btn btn-secondary btn-sm">Смотреть</a></td>
+            </tr>
+            <tr>
+              <td><div class="font-medium text-sm">Иллюстрации для блога</div><div class="text-xs text-muted">Срок: 10 дней</div></td>
+              <td><div class="flex items-center gap-2"><div class="avatar avatar-xs av-teal">БП</div><span class="text-sm">Блог «Путь»</span></div></td>
+              <td><div class="tag-row"><span class="tag tag-purple">Illustration</span></div></td>
+              <td><span class="font-medium" style="color:var(--spark);">900₽</span></td>
+              <td><span class="font-display font-bold" style="color:var(--status-progress);font-size:0.88rem;">74%</span></td>
+              <td><a href="#" class="btn btn-secondary btn-sm">Смотреть</a></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
+  </div>
+</main>
 
-  </main>
+<nav class="bottom-nav">
+  <div class="bn-item active"><span class="bn-icon">⊞</span><span class="bn-label">Главная</span></div>
+  <div class="bn-item" onclick="location.href='#'"><span class="bn-icon">◈</span><span class="bn-label">Задачи</span><span class="bn-badge">3</span></div>
+  <div class="bn-item"><span class="bn-icon">◉</span><span class="bn-label">Портфолио</span></div>
+  <div class="bn-item"><span class="bn-icon">✉</span><span class="bn-label">Чат</span><span class="bn-badge">2</span></div>
+  <div class="bn-item"><span class="bn-icon">👤</span><span class="bn-label">Профиль</span></div>
+</nav>
 </div>
+
+<script>
+(function(){const s=localStorage.getItem('sf-theme')||'light';document.documentElement.setAttribute('data-theme',s);})();
+function toggleTheme(){const h=document.documentElement;const c=h.getAttribute('data-theme');const n=c==='dark'?'light':'dark';h.setAttribute('data-theme',n);localStorage.setItem('sf-theme',n);}
+window.addEventListener('DOMContentLoaded',()=>{
+  setTimeout(()=>{
+    document.getElementById('skeleton').classList.remove('active');
+    document.getElementById('mainPage').classList.add('loaded');
+  },800);
+});
+</script>
 </body>
 </html>
