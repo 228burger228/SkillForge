@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Профиль ментора — SkillForge</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.sk-page{display:none;}.sk-page.active{display:block;}
+.main-page{opacity:0;transition:opacity 0.35s;}.main-page.loaded{opacity:1;}
+
+.profile-cover{height:180px;background:linear-gradient(135deg,#2d1b69 0%,#1a1040 60%,#0d0820 100%);position:relative;overflow:hidden;border-radius:var(--radius-md) var(--radius-md) 0 0;}
+.profile-cover::before{content:'М';font-family:var(--font-display);font-size:18rem;font-weight:900;color:rgba(255,255,255,0.04);position:absolute;right:1rem;bottom:-4rem;line-height:1;}
+.profile-hero{background:var(--bg-surface);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius-md) var(--radius-md);padding:0 1.75rem 1.5rem;margin-bottom:1.25rem;}
+.profile-avatar-wrap{position:relative;display:inline-block;margin-top:-40px;margin-bottom:0.85rem;}
+.profile-avatar{width:80px;height:80px;border-radius:50%;background:#6d28d9;border:4px solid var(--bg-surface);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:900;font-size:1.4rem;color:#fff;}
+.profile-online-dot{position:absolute;bottom:6px;right:6px;width:14px;height:14px;border-radius:50%;background:var(--status-done);border:2.5px solid var(--bg-surface);}
+.profile-meta-row{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
+.profile-name{font-family:var(--font-display);font-size:1.25rem;font-weight:900;letter-spacing:-0.02em;margin-bottom:0.15rem;}
+.profile-handle{font-size:0.78rem;color:var(--text-muted);margin-bottom:0.45rem;}
+.profile-bio{font-size:0.84rem;color:var(--text-secondary);max-width:500px;line-height:1.55;margin-bottom:0.75rem;}
+.profile-info-row{display:flex;flex-wrap:wrap;gap:1rem;}
+.profile-info-item{display:flex;align-items:center;gap:0.35rem;font-size:0.76rem;color:var(--text-muted);}
+.profile-info-item strong{color:var(--text-secondary);}
+.profile-stats-row{display:flex;gap:0;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-top:1rem;}
+.profile-stat{flex:1;text-align:center;padding:0.8rem 0.5rem;border-right:1px solid var(--border);transition:background var(--transition);}
+.profile-stat:last-child{border-right:none;}
+.profile-stat:hover{background:var(--bg-raised);}
+.profile-stat-val{font-family:var(--font-display);font-size:1.3rem;font-weight:900;line-height:1;}
+.profile-stat-label{font-size:0.6rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--text-muted);margin-top:0.3rem;}
+
+.profile-tabs{display:flex;background:var(--bg-surface);border:1px solid var(--border);border-bottom:none;border-radius:var(--radius-md) var(--radius-md) 0 0;padding:0 1.25rem;overflow-x:auto;scrollbar-width:none;}
+.profile-tabs::-webkit-scrollbar{display:none;}
+.ptab{font-size:0.78rem;font-weight:600;padding:0.85rem 1rem;color:var(--text-muted);border-bottom:2px solid transparent;cursor:pointer;transition:all var(--transition);white-space:nowrap;margin-bottom:-1px;display:flex;align-items:center;gap:0.4rem;}
+.ptab:hover{color:var(--text-primary);}
+.ptab.active{color:var(--forge);border-bottom-color:var(--forge);}
+.ptab-count{font-size:0.58rem;font-weight:700;background:var(--bg-overlay);color:var(--text-muted);padding:0.1rem 0.45rem;border-radius:9px;}
+.ptab.active .ptab-count{background:var(--forge-dim);color:var(--forge);}
+.tab-panel{display:none;}.tab-panel.active{display:block;}
+.tab-body{background:var(--bg-surface);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius-md) var(--radius-md);padding:1.5rem;}
+
+/* GROUP SYSTEM */
+.group-header{background:linear-gradient(135deg,#2d1b69,#1a1040);border-radius:var(--radius-md);padding:1.25rem 1.5rem;color:#fff;margin-bottom:1.25rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;}
+.group-name{font-family:var(--font-display);font-size:1rem;font-weight:700;margin-bottom:0.25rem;}
+.group-meta{font-size:0.72rem;color:rgba(255,255,255,0.5);}
+.group-stats{display:flex;gap:1.5rem;}
+.group-stat-val{font-family:var(--font-display);font-size:1.5rem;font-weight:900;line-height:1;color:#fff;}
+.group-stat-label{font-size:0.6rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-top:0.2rem;}
+
+.student-card{display:flex;align-items:center;gap:0.85rem;padding:0.9rem 1.25rem;border-bottom:1px solid var(--border);transition:background var(--transition);cursor:pointer;}
+.student-card:last-child{border-bottom:none;}
+.student-card:hover{background:var(--bg-raised);}
+.student-card-info{flex:1;}
+.student-card-name{font-size:0.86rem;font-weight:500;margin-bottom:0.15rem;}
+.student-card-meta{font-size:0.72rem;color:var(--text-muted);}
+.student-card-progress{display:flex;align-items:center;gap:0.75rem;min-width:120px;}
+
+/* AI REVIEW QUEUE */
+.review-queue-item{padding:1rem 1.25rem;border-bottom:1px solid var(--border);}
+.review-queue-item:last-child{border-bottom:none;}
+.rq-header{display:flex;align-items:center;justify-content:space-between;gap:0.75rem;margin-bottom:0.75rem;}
+.rq-ai-block{background:var(--bg-raised);border-radius:var(--radius-sm);padding:0.75rem;border-left:2px solid var(--forge-border);}
+.rq-ai-row{display:flex;align-items:flex-start;gap:0.5rem;font-size:0.78rem;padding:0.2rem 0;}
+.rq-icon-ok{color:var(--status-done);flex-shrink:0;}
+.rq-icon-warn{color:var(--status-progress);flex-shrink:0;}
+.rq-icon-info{color:var(--status-new);flex-shrink:0;}
+
+/* SCHEDULE */
+.schedule-item{display:flex;gap:1rem;padding:0.85rem 0;border-bottom:1px solid var(--border);align-items:flex-start;}
+.schedule-item:last-child{border-bottom:none;}
+.schedule-date{min-width:60px;text-align:center;padding:0.5rem;background:var(--bg-raised);border-radius:var(--radius-sm);border:1px solid var(--border);}
+.schedule-day{font-family:var(--font-display);font-size:1rem;font-weight:900;line-height:1;color:var(--text-primary);}
+.schedule-month{font-size:0.6rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-muted);margin-top:0.15rem;}
+.schedule-content{flex:1;}
+.schedule-title{font-size:0.84rem;font-weight:500;margin-bottom:0.2rem;}
+.schedule-meta{font-size:0.72rem;color:var(--text-muted);}
+
+/* EXPERTISE */
+.exp-chip{display:flex;align-items:center;justify-content:space-between;padding:0.6rem 0.85rem;background:var(--bg-raised);border:1px solid var(--border);border-radius:var(--radius-sm);transition:all var(--transition);margin-bottom:0.5rem;}
+.exp-chip:hover{border-color:rgba(124,58,237,0.3);background:rgba(124,58,237,0.06);}
+.exp-chip-left{display:flex;align-items:center;gap:0.6rem;}
+.exp-chip-name{font-size:0.82rem;font-weight:500;}
+.exp-chip-count{font-family:var(--font-display);font-size:0.65rem;font-weight:900;color:#6d28d9;background:rgba(124,58,237,0.1);padding:0.1rem 0.4rem;border-radius:3px;}
+
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);width:100%;max-width:500px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);}
+.modal-header{padding:1.1rem 1.4rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.modal-title{font-family:var(--font-display);font-size:0.82rem;font-weight:700;}
+.modal-close{width:26px;height:26px;border-radius:var(--radius-sm);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:0.85rem;color:var(--text-muted);transition:all var(--transition);}
+.modal-close:hover{border-color:var(--border-hover);color:var(--text-primary);}
+.modal-body{padding:1.4rem;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.spin{display:inline-block;animation:spin 1s linear infinite;}
+</style>
+</head>
+<body>
+<div class="app-shell">
+<aside class="sidebar">
+  <div class="sidebar-logo"><a href="index.html">Skill<span>Forge</span></a></div>
+  <div class="sidebar-user">
+    <div class="user-card">
+      <div class="avatar avatar-md av-purple">СМ</div>
+      <div><div class="user-name">Светлана Михайлова</div><div class="user-org">Кафедра дизайна · Колледж №10</div><span class="user-role-badge badge-mentor">Ментор · Верифицирован ✓</span></div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Главное</div>
+    <a href="dashboard-mentor.html" class="nav-item"><span class="nav-icon">⊞</span> Дашборд</a>
+    <a href="#" class="nav-item"><span class="nav-icon">◉</span> Мои студенты <span class="nav-badge">8</span></a>
+    <a href="#" class="nav-item"><span class="nav-icon">◈</span> Проверка работ <span class="nav-badge" style="background:var(--status-review)">3</span></a>
+    <a href="profile-mentor.html" class="nav-item active"><span class="nav-icon">👤</span> Мой профиль</a>
+    <div class="nav-section-label">Коммуникация</div>
+    <a href="#" class="nav-item"><span class="nav-icon">✉</span> Чат <span class="nav-badge">4</span></a>
+    <div class="nav-section-label">AI-инструменты</div>
+    <a href="#" class="nav-item"><span class="nav-icon">✦</span> AI-ревью <span class="user-role-badge badge-ai" style="margin-left:auto;margin-top:0;font-size:0.5rem;">AI</span></a>
+  </nav>
+  <div class="sidebar-bottom">
+    <a href="#" class="nav-item"><span class="nav-icon">⚙</span> Настройки</a>
+    <a href="index.html" class="nav-item text-muted"><span class="nav-icon">←</span> Выйти</a>
+  </div>
+</aside>
+
+<header class="topbar">
+  <div class="topbar-breadcrumb"><a href="dashboard-mentor.html">Дашборд</a><span class="topbar-sep">/</span><span class="crumb-active">Мой профиль</span></div>
+  <div class="topbar-actions">
+    <button class="btn btn-secondary btn-sm" onclick="openEditModal()">✏ Редактировать</button>
+    <button class="theme-toggle" onclick="toggleTheme()"><span class="icon-moon">🌙</span><span class="icon-sun">☀️</span></button>
+    <button class="icon-btn">🔔<span class="dot"></span></button>
+    <div class="avatar avatar-sm av-purple">СМ</div>
+  </div>
+</header>
+
+<main class="main-content">
+  <div class="sk-page active" id="skeleton">
+    <div class="skeleton" style="height:180px;border-radius:var(--radius-md) var(--radius-md) 0 0;"></div>
+    <div class="skeleton" style="height:180px;border-radius:0 0 var(--radius-md) var(--radius-md);margin-bottom:1rem;"></div>
+    <div class="grid-2"><div class="skeleton" style="height:300px;border-radius:var(--radius-md);"></div><div class="skeleton" style="height:300px;border-radius:var(--radius-md);"></div></div>
+  </div>
+
+  <div class="main-page" id="mainPage">
+    <!-- COVER -->
+    <div class="profile-cover">
+      <div style="position:absolute;top:1rem;right:1rem;">
+        <button class="btn btn-sm" style="background:rgba(255,255,255,0.12);color:#fff;border-color:rgba(255,255,255,0.2);font-size:0.58rem;" onclick="openEditModal()">✏ Обложка</button>
+      </div>
+    </div>
+
+    <!-- HERO -->
+    <div class="profile-hero">
+      <div class="profile-meta-row">
+        <div style="flex:1;">
+          <div class="profile-avatar-wrap">
+            <div class="profile-avatar">СМ</div>
+            <div class="profile-online-dot"></div>
+          </div>
+          <div class="profile-name">Светлана Михайлова</div>
+          <div class="profile-handle">Преподаватель · Кафедра веб-дизайна и UI/UX</div>
+          <p class="profile-bio">Занимаюсь подготовкой дизайнеров и фронтенд-разработчиков. 8 лет преподавания. Помогаю студентам выходить на реальный рынок, а не только сдавать учёбу.</p>
+          <div class="profile-info-row">
+            <div class="profile-info-item">🏫 <strong>Колледж дизайна №10</strong>, Москва</div>
+            <div class="profile-info-item">📅 Ментор с <strong>января 2025</strong></div>
+            <div class="profile-info-item">✓ <strong>Верифицирован</strong> платформой</div>
+          </div>
+        </div>
+        <div style="flex-shrink:0;display:flex;flex-direction:column;gap:0.5rem;align-items:flex-end;padding-top:3.5rem;">
+          <span class="status status-done">Верифицирован ✓</span>
+          <span class="user-role-badge badge-mentor">Ментор</span>
+          <button class="btn btn-primary btn-sm" onclick="openEditModal()">Редактировать</button>
+        </div>
+      </div>
+      <div class="profile-stats-row">
+        <div class="profile-stat"><div class="profile-stat-val">8</div><div class="profile-stat-label">Студентов</div></div>
+        <div class="profile-stat"><div class="profile-stat-val" style="color:var(--status-review);">3</div><div class="profile-stat-label">На проверке</div></div>
+        <div class="profile-stat"><div class="profile-stat-val">24</div><div class="profile-stat-label">Завершено</div></div>
+        <div class="profile-stat"><div class="profile-stat-val" style="color:var(--status-done);">4.6</div><div class="profile-stat-label">Рейтинг</div></div>
+        <div class="profile-stat"><div class="profile-stat-val">1</div><div class="profile-stat-label">Группа</div></div>
+      </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="profile-tabs">
+      <div class="ptab active" onclick="switchTab(this,'group')">Моя группа <span class="ptab-count">8</span></div>
+      <div class="ptab" onclick="switchTab(this,'queue')">Очередь проверки <span class="ptab-count" style="background:rgba(124,58,237,0.1);color:#6d28d9;">3</span></div>
+      <div class="ptab" onclick="switchTab(this,'expertise')">Экспертиза</div>
+      <div class="ptab" onclick="switchTab(this,'schedule')">Расписание</div>
+      <div class="ptab" onclick="switchTab(this,'reviews')">Отзывы <span class="ptab-count">12</span></div>
+    </div>
+    <div class="tab-body">
+
+      <!-- GROUP TAB -->
+      <div class="tab-panel active" id="tab-group">
+        <!-- Group banner -->
+        <div class="group-header">
+          <div>
+            <div class="group-name">Группа ВД-32</div>
+            <div class="group-meta">Веб-дизайн · Колледж дизайна №10 · 2022–2026</div>
+          </div>
+          <div class="group-stats">
+            <div><div class="group-stat-val">8</div><div class="group-stat-label">Студентов</div></div>
+            <div><div class="group-stat-val">5</div><div class="group-stat-label">Активных</div></div>
+            <div><div class="group-stat-val">32</div><div class="group-stat-label">Задач</div></div>
+          </div>
+          <button class="btn btn-sm" style="background:rgba(255,255,255,0.12);color:#fff;border-color:rgba(255,255,255,0.2);flex-shrink:0;" onclick="openAddStudent()">+ Добавить</button>
+        </div>
+
+        <div class="card" style="box-shadow:none;">
+          <div class="card-body-flush">
+            <!-- Student rows -->
+            <div class="student-card">
+              <div class="avatar avatar-sm av-steel">АК</div>
+              <div class="student-card-info">
+                <div class="student-card-name">Алёна Козлова</div>
+                <div class="student-card-meta">3 курс · Лендинг кофейни · Figma, HTML/CSS</div>
+              </div>
+              <div class="student-card-progress">
+                <div class="flex-1">
+                  <div class="progress-bar mb-1"><div class="progress-fill" style="width:65%;"></div></div>
+                  <div class="text-xs text-muted">65%</div>
+                </div>
+              </div>
+              <span class="status status-review" style="white-space:nowrap;">На проверке</span>
+              <button class="btn btn-primary btn-sm" style="white-space:nowrap;">Проверить</button>
+            </div>
+            <div class="student-card">
+              <div class="avatar avatar-sm av-purple">МВ</div>
+              <div class="student-card-info">
+                <div class="student-card-name">Максим Воронов</div>
+                <div class="student-card-meta">4 курс · Python-парсер · Backend</div>
+              </div>
+              <div class="student-card-progress">
+                <div class="flex-1">
+                  <div class="progress-bar mb-1"><div class="progress-fill pf-purple" style="width:85%;"></div></div>
+                  <div class="text-xs text-muted">85%</div>
+                </div>
+              </div>
+              <span class="status status-review" style="white-space:nowrap;">На проверке</span>
+              <button class="btn btn-primary btn-sm" style="white-space:nowrap;">Проверить</button>
+            </div>
+            <div class="student-card">
+              <div class="avatar avatar-sm av-green">НС</div>
+              <div class="student-card-info">
+                <div class="student-card-name">Никита Смирнов</div>
+                <div class="student-card-meta">2 курс · Чертёж сборочной единицы</div>
+              </div>
+              <div class="student-card-progress">
+                <div class="flex-1">
+                  <div class="progress-bar mb-1"><div class="progress-fill pf-blue" style="width:70%;"></div></div>
+                  <div class="text-xs text-muted">70%</div>
+                </div>
+              </div>
+              <span class="status status-review" style="white-space:nowrap;">На проверке</span>
+              <button class="btn btn-ghost btn-sm" style="white-space:nowrap;">AI-ревью</button>
+            </div>
+            <div class="student-card">
+              <div class="avatar avatar-sm av-teal">ДА</div>
+              <div class="student-card-info">
+                <div class="student-card-name">Дарья Антонова</div>
+                <div class="student-card-meta">3 курс · UX-аудит · В работе</div>
+              </div>
+              <div class="student-card-progress">
+                <div class="flex-1">
+                  <div class="progress-bar mb-1"><div class="progress-fill" style="width:40%;"></div></div>
+                  <div class="text-xs text-muted">40%</div>
+                </div>
+              </div>
+              <span class="status status-progress" style="white-space:nowrap;">В работе</span>
+              <button class="btn btn-ghost btn-sm">Чат</button>
+            </div>
+            <div class="student-card">
+              <div class="avatar avatar-sm av-spark" style="color:#1a1000;font-size:0.6rem;">ИП</div>
+              <div class="student-card-info">
+                <div class="student-card-name">Иван Петров</div>
+                <div class="student-card-meta">1 курс · Ищет задачу</div>
+              </div>
+              <div class="student-card-progress">
+                <div class="flex-1">
+                  <div class="progress-bar mb-1"><div class="progress-fill" style="width:0%;"></div></div>
+                  <div class="text-xs text-muted">—</div>
+                </div>
+              </div>
+              <span class="status status-neutral" style="white-space:nowrap;">Ожидание</span>
+              <button class="btn btn-ghost btn-sm">Помочь</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Group message -->
+        <div class="ai-promo mt-4">
+          <div class="ai-promo-head">📢 Сообщение группе</div>
+          <p>Отправьте сообщение всей группе ВД-32 сразу — например, напоминание о дедлайне.</p>
+          <div class="flex gap-2">
+            <input type="text" placeholder="Напоминание: до пятницы сдать правки по мобильной вёрстке..." style="flex:1;">
+            <button class="btn btn-primary btn-sm">Отправить</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- REVIEW QUEUE TAB -->
+      <div class="tab-panel" id="tab-queue">
+        <div class="flex justify-between items-center mb-4">
+          <div class="text-xs text-muted font-bold" style="letter-spacing:0.08em;text-transform:uppercase;">Очередь проверки · 3 работы</div>
+          <span class="user-role-badge badge-ai">✦ AI-ревью готово: 2</span>
+        </div>
+        <div class="card" style="box-shadow:none;">
+          <div class="card-body-flush">
+            <div class="review-queue-item">
+              <div class="rq-header">
+                <div class="flex items-center gap-2"><div class="avatar avatar-sm av-steel">АК</div><div><div class="text-sm font-medium">Алёна Козлова</div><div class="text-xs text-muted">Лендинг кофейни «Утро»</div></div></div>
+                <span class="user-role-badge badge-ai">✦ AI готово</span>
+              </div>
+              <div class="rq-ai-block mb-3">
+                <div class="text-xs text-muted font-bold mb-2" style="letter-spacing:0.06em;text-transform:uppercase;">AI-ревью</div>
+                <div class="rq-ai-row"><span class="rq-icon-ok">✓</span><span class="text-xs">Адаптивность: все брейкпоинты корректны</span></div>
+                <div class="rq-ai-row"><span class="rq-icon-ok">✓</span><span class="text-xs">Валидный HTML без синтаксических ошибок</span></div>
+                <div class="rq-ai-row"><span class="rq-icon-warn">⚠</span><span class="text-xs text-secondary">Отступы на 320px — margin-left: 0 ломается</span></div>
+                <div class="rq-ai-row"><span class="rq-icon-ok">✓</span><span class="text-xs">Форма бронирования: поля и валидация присутствуют</span></div>
+              </div>
+              <div class="flex gap-2 flex-wrap">
+                <button class="btn btn-primary btn-sm">Открыть работу</button>
+                <button class="btn btn-secondary btn-sm">Запросить правки</button>
+                <button class="btn btn-ghost btn-sm">Написать студенту</button>
+              </div>
+            </div>
+            <div class="review-queue-item">
+              <div class="rq-header">
+                <div class="flex items-center gap-2"><div class="avatar avatar-sm av-purple">МВ</div><div><div class="text-sm font-medium">Максим Воронов</div><div class="text-xs text-muted">Python-скрипт парсинга</div></div></div>
+                <span class="user-role-badge badge-ai">✦ AI готово</span>
+              </div>
+              <div class="rq-ai-block mb-3">
+                <div class="text-xs text-muted font-bold mb-2" style="letter-spacing:0.06em;text-transform:uppercase;">AI-ревью</div>
+                <div class="rq-ai-row"><span class="rq-icon-ok">✓</span><span class="text-xs">Синтаксис корректен, код запускается</span></div>
+                <div class="rq-ai-row"><span class="rq-icon-ok">✓</span><span class="text-xs">PEP8: стиль соблюдён</span></div>
+                <div class="rq-ai-row"><span class="rq-icon-warn">⚠</span><span class="text-xs text-secondary">calculate_tax(): value=0 не обрабатывается</span></div>
+                <div class="rq-ai-row"><span class="rq-icon-info">ℹ</span><span class="text-xs text-secondary">Рекомендуется docstrings к 3 функциям</span></div>
+              </div>
+              <div class="flex gap-2">
+                <button class="btn btn-primary btn-sm">Открыть работу</button>
+                <button class="btn btn-secondary btn-sm">Запросить правки</button>
+              </div>
+            </div>
+            <div class="review-queue-item">
+              <div class="rq-header">
+                <div class="flex items-center gap-2"><div class="avatar avatar-sm av-green">НС</div><div><div class="text-sm font-medium">Никита Смирнов</div><div class="text-xs text-muted">Чертёж сборочной единицы</div></div></div>
+                <span class="text-xs text-muted"><span class="spin">⟳</span> AI-ревью по ГОСТ 2.104...</span>
+              </div>
+              <div class="rq-ai-block mb-3" style="color:var(--text-muted);font-size:0.8rem;">⟳ Анализ по ГОСТ 2.104 — ~30 секунд...</div>
+              <div class="flex gap-2">
+                <button class="btn btn-ghost btn-sm">Проверить вручную</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXPERTISE -->
+      <div class="tab-panel" id="tab-expertise">
+        <div class="text-xs text-muted font-bold mb-4" style="letter-spacing:0.08em;text-transform:uppercase;">Предметная экспертиза</div>
+        <div class="grid-2 gap-4">
+          <div>
+            <div class="text-xs text-muted font-bold mb-3" style="letter-spacing:0.06em;text-transform:uppercase;">Дисциплины</div>
+            <div class="exp-chip"><div class="exp-chip-left"><span>🎨</span><span class="exp-chip-name">Веб-дизайн / UI</span></div><span class="exp-chip-count">24 проекта</span></div>
+            <div class="exp-chip"><div class="exp-chip-left"><span>🔍</span><span class="exp-chip-name">UX-исследования</span></div><span class="exp-chip-count">12 проектов</span></div>
+            <div class="exp-chip"><div class="exp-chip-left"><span>💻</span><span class="exp-chip-name">HTML/CSS верстка</span></div><span class="exp-chip-count">18 проектов</span></div>
+            <div class="exp-chip"><div class="exp-chip-left"><span>✏</span><span class="exp-chip-name">Брендинг / Айдентика</span></div><span class="exp-chip-count">8 проектов</span></div>
+          </div>
+          <div>
+            <div class="text-xs text-muted font-bold mb-3" style="letter-spacing:0.06em;text-transform:uppercase;">Инструменты проверки</div>
+            <div class="tag-row flex-wrap gap-2">
+              <span class="tag tag-forge" style="font-size:0.75rem;padding:0.3rem 0.75rem;">Figma</span>
+              <span class="tag tag-blue" style="font-size:0.75rem;padding:0.3rem 0.75rem;">HTML/CSS</span>
+              <span class="tag tag-purple" style="font-size:0.75rem;padding:0.3rem 0.75rem;">UX Heuristics</span>
+              <span class="tag tag-green" style="font-size:0.75rem;padding:0.3rem 0.75rem;">Lighthouse</span>
+              <span class="tag" style="font-size:0.75rem;padding:0.3rem 0.75rem;">WCAG</span>
+              <span class="tag" style="font-size:0.75rem;padding:0.3rem 0.75rem;">Валидатор W3C</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCHEDULE -->
+      <div class="tab-panel" id="tab-schedule">
+        <div class="flex justify-between items-center mb-4">
+          <div class="text-xs text-muted font-bold" style="letter-spacing:0.08em;text-transform:uppercase;">Расписание проверок · Март 2025</div>
+          <button class="btn btn-secondary btn-sm">+ Добавить слот</button>
+        </div>
+        <div class="schedule-item">
+          <div class="schedule-date"><div class="schedule-day">18</div><div class="schedule-month">Мар</div></div>
+          <div class="schedule-content">
+            <div class="schedule-title">Проверка лендинга Алёны Козловой</div>
+            <div class="schedule-meta">10:00–11:00 · Лендинг кофейни «Утро» · AI-ревью готово</div>
+          </div>
+          <span class="status status-forge" style="background:var(--forge-dim);color:var(--forge);font-size:0.6rem;">Сегодня</span>
+        </div>
+        <div class="schedule-item">
+          <div class="schedule-date"><div class="schedule-day">19</div><div class="schedule-month">Мар</div></div>
+          <div class="schedule-content">
+            <div class="schedule-title">Встреча с группой ВД-32</div>
+            <div class="schedule-meta">14:00–15:30 · Разбор ошибок за месяц · Онлайн</div>
+          </div>
+          <span class="status status-new" style="font-size:0.6rem;">Завтра</span>
+        </div>
+        <div class="schedule-item">
+          <div class="schedule-date"><div class="schedule-day">21</div><div class="schedule-month">Мар</div></div>
+          <div class="schedule-content">
+            <div class="schedule-title">Проверка Python-парсера Максима Воронова</div>
+            <div class="schedule-meta">11:00–12:00 · AI-ревью готово</div>
+          </div>
+          <span class="status status-neutral" style="font-size:0.6rem;">Пт</span>
+        </div>
+      </div>
+
+      <!-- REVIEWS -->
+      <div class="tab-panel" id="tab-reviews">
+        <div class="flex justify-between items-center mb-4">
+          <div class="text-xs text-muted font-bold" style="letter-spacing:0.08em;text-transform:uppercase;">Отзывы студентов</div>
+          <div class="flex items-center gap-2"><span style="color:var(--spark);">⭐</span><span class="font-display font-bold" style="font-size:1.1rem;">4.9</span><span class="text-xs text-muted">из 5 · 12 отзывов</span></div>
+        </div>
+        <div class="review-card" style="padding:1rem 1.2rem;border:1px solid var(--border);border-radius:var(--radius-md);margin-bottom:0.75rem;">
+          <div class="flex items-start justify-between mb-2"><div class="flex items-center gap-2"><div class="avatar avatar-xs av-steel">АК</div><div><div class="text-sm font-medium">Алёна Козлова</div><div class="text-xs text-muted">Студент ВД-32</div></div></div><div style="color:var(--spark);font-size:0.8rem;">★★★★★</div></div>
+          <div class="text-sm text-secondary" style="line-height:1.55;margin-bottom:0.5rem;">Светлана Витальевна — лучший ментор! Всегда даёт конкретную обратную связь, не просто «переделай». AI-ревью очень помогает понять ошибки заранее.</div>
+          <div class="text-xs text-muted">Март 2025</div>
+        </div>
+        <div class="review-card" style="padding:1rem 1.2rem;border:1px solid var(--border);border-radius:var(--radius-md);margin-bottom:0.75rem;">
+          <div class="flex items-start justify-between mb-2"><div class="flex items-center gap-2"><div class="avatar avatar-xs av-purple">МВ</div><div><div class="text-sm font-medium">Максим Воронов</div><div class="text-xs text-muted">Студент ВД-32</div></div></div><div style="color:var(--spark);font-size:0.8rem;">★★★★★</div></div>
+          <div class="text-sm text-secondary" style="line-height:1.55;margin-bottom:0.5rem;">Ментор быстро отвечает, помогает разобраться в нюансах ТЗ. Заказчик был доволен именно благодаря советам по оформлению кода.</div>
+          <div class="text-xs text-muted">Февраль 2025</div>
+        </div>
+      </div>
+
+    </div><!-- tab-body -->
+  </div>
+</main>
+
+<nav class="bottom-nav">
+  <div class="bn-item" onclick="location.href='dashboard-mentor.html'"><span class="bn-icon">⊞</span><span class="bn-label">Главная</span></div>
+  <div class="bn-item"><span class="bn-icon">◉</span><span class="bn-label">Студенты</span><span class="bn-badge">8</span></div>
+  <div class="bn-item"><span class="bn-icon">◈</span><span class="bn-label">Проверка</span><span class="bn-badge">3</span></div>
+  <div class="bn-item"><span class="bn-icon">✉</span><span class="bn-label">Чат</span><span class="bn-badge">4</span></div>
+  <div class="bn-item active"><span class="bn-icon">👤</span><span class="bn-label">Профиль</span></div>
+</nav>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="editModal" onclick="if(event.target===this)closeEditModal()">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">Редактировать профиль ментора</span><button class="modal-close" onclick="closeEditModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">ФИО</label><input type="text" value="Светлана Витальевна Михайлова"></div>
+      <div class="form-group"><label class="form-label">Должность</label><input type="text" value="Преподаватель кафедры веб-дизайна и UI/UX"></div>
+      <div class="form-group"><label class="form-label">Учебное заведение</label><input type="text" value="Колледж дизайна №10, Москва"></div>
+      <div class="form-group"><label class="form-label">О себе</label><textarea rows="3">Занимаюсь подготовкой дизайнеров и фронтенд-разработчиков. 8 лет преподавания.</textarea></div>
+      <div class="form-group"><label class="form-label">Email учебного заведения</label><input type="email" value="mikhailova@design10.ru"><div class="form-hint">✓ Аффилиация подтверждена</div></div>
+      <div class="flex gap-3"><button class="btn btn-primary" onclick="closeEditModal()">Сохранить</button><button class="btn btn-ghost" onclick="closeEditModal()">Отмена</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD STUDENT MODAL -->
+<div class="modal-overlay" id="addStudentModal" onclick="if(event.target===this)closeAddStudent()">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">Добавить студента в группу</span><button class="modal-close" onclick="closeAddStudent()">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Email студента</label><input type="email" placeholder="student@edu.ru"><div class="form-hint">Студент получит уведомление и должен подтвердить вступление в группу</div></div>
+      <div class="form-group"><label class="form-label">Или пригласить по ссылке</label><div class="flex gap-2"><input type="text" value="https://skillforge.ru/group/vd32/join/abc123" readonly style="font-size:0.75rem;color:var(--text-muted);"><button class="btn btn-secondary btn-sm" style="white-space:nowrap;">Копировать</button></div></div>
+      <div class="flex gap-3"><button class="btn btn-primary" onclick="closeAddStudent()">Пригласить</button><button class="btn btn-ghost" onclick="closeAddStudent()">Отмена</button></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){const s=localStorage.getItem('sf-theme')||'light';document.documentElement.setAttribute('data-theme',s);})();
+function toggleTheme(){const h=document.documentElement;const n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);localStorage.setItem('sf-theme',n);}
+window.addEventListener('DOMContentLoaded',()=>{setTimeout(()=>{document.getElementById('skeleton').classList.remove('active');document.getElementById('mainPage').classList.add('loaded');},700);});
+function switchTab(el,id){document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));el.classList.add('active');document.getElementById('tab-'+id).classList.add('active');}
+function openEditModal(){document.getElementById('editModal').classList.add('open');}
+function closeEditModal(){document.getElementById('editModal').classList.remove('open');}
+function openAddStudent(){document.getElementById('addStudentModal').classList.add('open');}
+function closeAddStudent(){document.getElementById('addStudentModal').classList.remove('open');}
+</script>
+</body>
+</html>
