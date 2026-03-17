@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Умный мэтчинг — SkillForge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Onest:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#0d0d0d;--paper:#f5f2eb;--forge:#E85C2A;--steel:#1A3A5C;--spark:#F5A623;--muted:#7a756d;--line:rgba(13,13,13,0.12);}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--paper);color:var(--ink);font-family:'Onest',sans-serif;line-height:1.6;overflow-x:hidden;}
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.2rem 2.5rem;border-bottom:1px solid var(--line);background:rgba(245,242,235,0.92);backdrop-filter:blur(12px);}
+  .nav-logo{font-family:'Unbounded',sans-serif;font-weight:900;font-size:1.1rem;letter-spacing:-0.02em;color:var(--ink);text-decoration:none;}
+  .nav-logo span{color:var(--forge);}
+  .nav-back{font-size:0.8rem;font-weight:500;letter-spacing:0.04em;text-transform:uppercase;text-decoration:none;color:var(--muted);transition:color 0.2s;}
+  .nav-back:hover{color:var(--ink);}
+
+  .page-hero{padding:10rem 2.5rem 6rem;border-bottom:1px solid var(--line);background:var(--forge);color:var(--paper);position:relative;overflow:hidden;}
+  .page-hero::before{content:'AI';font-family:'Unbounded',sans-serif;font-size:20rem;font-weight:900;color:rgba(245,242,235,0.07);position:absolute;right:-1rem;top:-2rem;line-height:1;pointer-events:none;}
+  .hero-tag{font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:0.3rem 0.7rem;border-radius:2px;display:inline-block;margin-bottom:1.5rem;background:rgba(245,242,235,0.2);color:var(--paper);}
+  .page-title{font-family:'Unbounded',sans-serif;font-size:clamp(2.5rem,6vw,5rem);font-weight:900;line-height:0.95;letter-spacing:-0.03em;margin-bottom:1.5rem;}
+  .page-subtitle{font-size:1.1rem;color:rgba(245,242,235,0.7);max-width:560px;line-height:1.7;}
+  .hero-meta-row{display:flex;gap:1px;margin-top:4rem;background:rgba(245,242,235,0.15);}
+  .meta-pill{padding:1.2rem 2rem;flex:1;}
+  .meta-label{font-size:0.65rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(245,242,235,0.5);margin-bottom:0.4rem;}
+  .meta-value{font-size:0.9rem;color:var(--paper);}
+
+  .section{padding:6rem 2.5rem;border-bottom:1px solid var(--line);}
+  .section-dark{background:var(--ink);color:var(--paper);}
+  .section-title{font-family:'Unbounded',sans-serif;font-size:clamp(1.5rem,3vw,2.5rem);font-weight:900;line-height:1.1;letter-spacing:-0.02em;margin-bottom:3rem;}
+  .section-title em{color:var(--forge);font-style:normal;}
+  .section-title.on-dark em{color:var(--spark);}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:3rem;}
+  .three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;}
+
+  /* Profile card mock */
+  .profile-mock{border:1px solid var(--line);background:var(--paper);}
+  .profile-header{padding:1.5rem;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:1rem;}
+  .avatar{width:44px;height:44px;border-radius:50%;background:var(--steel);display:flex;align-items:center;justify-content:center;color:var(--paper);font-family:'Unbounded',sans-serif;font-weight:700;font-size:0.85rem;flex-shrink:0;}
+  .profile-name{font-family:'Unbounded',sans-serif;font-size:0.9rem;font-weight:700;}
+  .profile-sub{font-size:0.78rem;color:var(--muted);}
+  .profile-body{padding:1.5rem;}
+  .skill-row{margin-bottom:1rem;}
+  .skill-label{font-size:0.72rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);margin-bottom:0.4rem;}
+  .skill-tags{display:flex;flex-wrap:wrap;gap:0.4rem;}
+  .skill-tag{font-size:0.72rem;padding:0.2rem 0.6rem;border-radius:2px;background:rgba(26,58,92,0.1);color:var(--steel);font-weight:500;}
+  .match-score{display:flex;align-items:center;justify-content:space-between;padding:0.8rem 1.5rem;background:rgba(232,92,42,0.07);border-top:1px solid var(--line);}
+  .score-label{font-size:0.72rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);}
+  .score-val{font-family:'Unbounded',sans-serif;font-size:1.2rem;font-weight:900;color:var(--forge);}
+
+  .signal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem;}
+  .signal-card{padding:2rem;border:1px solid rgba(245,242,235,0.1);}
+  .signal-icon{font-size:1.5rem;margin-bottom:0.75rem;}
+  .signal-title{font-family:'Unbounded',sans-serif;font-size:0.82rem;font-weight:700;margin-bottom:0.4rem;color:var(--paper);}
+  .signal-desc{font-size:0.82rem;color:rgba(245,242,235,0.5);line-height:1.5;}
+
+  .benefit-card{padding:2rem;border:1px solid var(--line);}
+  .benefit-icon{font-size:1.5rem;margin-bottom:1rem;}
+  .benefit-title{font-family:'Unbounded',sans-serif;font-size:0.85rem;font-weight:700;margin-bottom:0.5rem;}
+  .benefit-desc{font-size:0.85rem;color:var(--muted);line-height:1.5;}
+
+  .cta-section{padding:6rem 2.5rem;background:var(--ink);color:var(--paper);display:grid;grid-template-columns:1fr auto;align-items:center;gap:3rem;}
+  .cta-title{font-family:'Unbounded',sans-serif;font-size:clamp(1.3rem,3vw,2.2rem);font-weight:900;line-height:1.1;}
+  .cta-title em{color:var(--forge);font-style:normal;}
+  .btn-forge{background:var(--forge);color:var(--paper);font-family:'Unbounded',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;padding:1rem 2rem;border-radius:2px;white-space:nowrap;}
+  footer{padding:2.5rem;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;}
+  .footer-logo{font-family:'Unbounded',sans-serif;font-weight:900;font-size:0.9rem;color:var(--ink);text-decoration:none;}
+  .footer-logo span{color:var(--forge);}
+  .footer-tagline{font-size:0.8rem;color:var(--muted);}
+  .fade-up{opacity:0;transform:translateY(24px);transition:opacity 0.6s ease,transform 0.6s ease;}
+  .fade-up.visible{opacity:1;transform:none;}
+  @media(max-width:900px){.two-col,.three-col,.signal-grid,.cta-section,.hero-meta-row{grid-template-columns:1fr;}.page-hero{padding:8rem 1.5rem 4rem;}.section{padding:4rem 1.5rem;}nav{padding:1rem 1.5rem;}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo">Skill<span>Forge</span></a>
+  <a href="index.html" class="nav-back">← Назад</a>
+</nav>
+
+<section class="page-hero">
+  <span class="hero-tag">AI-инструмент #03</span>
+  <h1 class="page-title">Умный<br>мэтчинг</h1>
+  <p class="page-subtitle">Рекомендательная система, которая знает — что нужно студенту, и кто нужен бизнесу.</p>
+  <div class="hero-meta-row">
+    <div class="meta-pill"><div class="meta-label">Для кого</div><div class="meta-value">Студенты и бизнес-заказчики</div></div>
+    <div class="meta-pill"><div class="meta-label">Проблема</div><div class="meta-value">Сложно найти подходящие задачи в общей ленте</div></div>
+    <div class="meta-pill"><div class="meta-label">Статус</div><div class="meta-value">В разработке</div></div>
+  </div>
+</section>
+
+<section class="section">
+  <h2 class="section-title fade-up">Две стороны,<br>один <em>алгоритм</em></h2>
+  <div class="two-col">
+    <div class="fade-up">
+      <p style="font-size:0.78rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--forge);margin-bottom:1.5rem;">Для студента</p>
+      <div class="profile-mock">
+        <div class="profile-header">
+          <div class="avatar">АК</div>
+          <div><div class="profile-name">Алёна Козлова</div><div class="profile-sub">3 курс · Веб-дизайн · Колледж №10</div></div>
+        </div>
+        <div class="profile-body">
+          <div class="skill-row">
+            <div class="skill-label">Навыки</div>
+            <div class="skill-tags"><span class="skill-tag">Figma</span><span class="skill-tag">HTML/CSS</span><span class="skill-tag">UX-исследования</span></div>
+          </div>
+          <div class="skill-row">
+            <div class="skill-label">Выполненные задачи</div>
+            <div class="skill-tags"><span class="skill-tag">Лендинг × 2</span><span class="skill-tag">Логотип × 1</span></div>
+          </div>
+        </div>
+        <div class="match-score">
+          <span class="score-label">Подходящих задач сейчас</span>
+          <span class="score-val">7</span>
+        </div>
+      </div>
+      <p style="font-size:0.82rem;color:var(--muted);margin-top:1rem;line-height:1.5;">AI анализирует специальность, курс и историю выполненных задач — и автоматически показывает только релевантные заказы.</p>
+    </div>
+    <div class="fade-up">
+      <p style="font-size:0.78rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--steel);margin-bottom:1.5rem;">Для бизнеса</p>
+      <div class="profile-mock">
+        <div class="profile-header">
+          <div class="avatar" style="background:var(--forge);">ТК</div>
+          <div><div class="profile-name">ООО «ТехКафе»</div><div class="profile-sub">Задача: редизайн меню и соцсетей</div></div>
+        </div>
+        <div class="profile-body">
+          <div class="skill-row">
+            <div class="skill-label">Нужные компетенции</div>
+            <div class="skill-tags"><span class="skill-tag">Дизайн</span><span class="skill-tag">SMM</span><span class="skill-tag">Фотообработка</span></div>
+          </div>
+          <div class="skill-row">
+            <div class="skill-label">Предпочтительно</div>
+            <div class="skill-tags"><span class="skill-tag">Колледж дизайна</span><span class="skill-tag">2–4 курс</span></div>
+          </div>
+        </div>
+        <div class="match-score">
+          <span class="score-label">Идеально подходящих студентов</span>
+          <span class="score-val">5</span>
+        </div>
+      </div>
+      <p style="font-size:0.82rem;color:var(--muted);margin-top:1rem;line-height:1.5;">«Проектная рассылка»: заказчик указывает нужный вуз или колледж, и задача уходит напрямую к нужной концентрации талантов.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section section-dark">
+  <h2 class="section-title on-dark fade-up">Что анализирует <em>алгоритм</em></h2>
+  <div class="signal-grid">
+    <div class="signal-card fade-up">
+      <div class="signal-icon">🎓</div>
+      <div class="signal-title">Профиль студента</div>
+      <div class="signal-desc">Специальность, курс, учебное заведение, теги навыков из выполненных задач.</div>
+    </div>
+    <div class="signal-card fade-up">
+      <div class="signal-icon">📈</div>
+      <div class="signal-title">История и рейтинг</div>
+      <div class="signal-desc">Количество и сложность завершённых проектов, оценки заказчиков и менторов.</div>
+    </div>
+    <div class="signal-card fade-up">
+      <div class="signal-icon">🔧</div>
+      <div class="signal-title">Требования задачи</div>
+      <div class="signal-desc">Компетенции, инструменты, сроки, уровень сложности из структурированного ТЗ.</div>
+    </div>
+    <div class="signal-card fade-up">
+      <div class="signal-icon">🏫</div>
+      <div class="signal-title">Контекст учебного заведения</div>
+      <div class="signal-desc">Специализация вуза/колледжа, наличие верифицированных менторов по данной теме.</div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <h2 class="section-title fade-up">Что это <em>меняет</em></h2>
+  <div class="three-col">
+    <div class="benefit-card fade-up">
+      <div class="benefit-icon">🎯</div>
+      <div class="benefit-title">Студент</div>
+      <div class="benefit-desc">Видит только задачи своего уровня. Нет ощущения, что ищешь иголку в стоге сена. Растёт по сложности постепенно.</div>
+    </div>
+    <div class="benefit-card fade-up">
+      <div class="benefit-icon">⚡</div>
+      <div class="benefit-title">Бизнес</div>
+      <div class="benefit-desc">Не тратит время на просмотр неподходящих откликов. Получает 3–7 релевантных кандидатов, уже отфильтрованных платформой.</div>
+    </div>
+    <div class="benefit-card fade-up">
+      <div class="benefit-icon">📊</div>
+      <div class="benefit-title">Платформа</div>
+      <div class="benefit-desc">Процент успешно завершённых проектов растёт, когда студент берётся за задачу своего уровня компетенций.</div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="cta-title">Умный мэтчинг — часть<br>большой <em>AI-экосистемы</em></div>
+  <a href="index.html#ai" class="btn-forge">Все инструменты</a>
+</section>
+
+<footer>
+  <a href="index.html" class="footer-logo">Skill<span>Forge</span></a>
+  <span class="footer-tagline">Куём навыки вместе © 2025</span>
+</footer>
+<script>
+const observer=new IntersectionObserver((entries)=>{entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*80);observer.unobserve(e.target);}});},{threshold:0.1});
+document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+</script>
+</body>
+</html>
