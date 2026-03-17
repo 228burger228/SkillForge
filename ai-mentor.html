@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI-Ассистент Ментора — SkillForge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Onest:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --ink:#0d0d0d; --paper:#f5f2eb; --forge:#E85C2A; --steel:#1A3A5C; --spark:#F5A623; --muted:#7a756d; --line:rgba(13,13,13,0.12); }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--paper);color:var(--ink);font-family:'Onest',sans-serif;font-weight:400;line-height:1.6;overflow-x:hidden;}
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.2rem 2.5rem;border-bottom:1px solid var(--line);background:rgba(245,242,235,0.92);backdrop-filter:blur(12px);}
+  .nav-logo{font-family:'Unbounded',sans-serif;font-weight:900;font-size:1.1rem;letter-spacing:-0.02em;color:var(--ink);text-decoration:none;}
+  .nav-logo span{color:var(--forge);}
+  .nav-back{font-size:0.8rem;font-weight:500;letter-spacing:0.04em;text-transform:uppercase;text-decoration:none;color:var(--muted);display:flex;align-items:center;gap:0.5rem;transition:color 0.2s;}
+  .nav-back:hover{color:var(--ink);}
+
+  .page-hero{padding:10rem 2.5rem 6rem;display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:end;border-bottom:1px solid var(--line);background:var(--steel);color:var(--paper);position:relative;overflow:hidden;}
+  .page-hero::before{content:'ММ';font-family:'Unbounded',sans-serif;font-size:18rem;font-weight:900;color:rgba(245,242,235,0.04);position:absolute;right:-2rem;bottom:-3rem;line-height:1;pointer-events:none;}
+  .hero-tag{font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:0.3rem 0.7rem;border-radius:2px;display:inline-block;margin-bottom:1.5rem;background:rgba(245,166,35,0.2);color:var(--spark);}
+  .page-title{font-family:'Unbounded',sans-serif;font-size:clamp(2rem,5vw,4rem);font-weight:900;line-height:1.0;letter-spacing:-0.03em;}
+  .page-title em{color:var(--spark);font-style:normal;}
+  .page-subtitle{font-size:1rem;color:rgba(245,242,235,0.55);line-height:1.7;margin-top:1.5rem;}
+  .hero-meta{display:flex;flex-direction:column;gap:1.5rem;}
+  .meta-item{padding:1.5rem;border:1px solid rgba(245,242,235,0.1);}
+  .meta-label{font-size:0.65rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(245,242,235,0.35);margin-bottom:0.5rem;}
+  .meta-value{font-size:0.95rem;}
+
+  .section{padding:6rem 2.5rem;border-bottom:1px solid var(--line);}
+  .section-dark{background:var(--ink);color:var(--paper);}
+  .section-steel{background:var(--steel);color:var(--paper);}
+  .section-title{font-family:'Unbounded',sans-serif;font-size:clamp(1.5rem,3vw,2.5rem);font-weight:900;line-height:1.1;letter-spacing:-0.02em;margin-bottom:3rem;}
+  .section-title em{color:var(--forge);font-style:normal;}
+  .section-title.spark em{color:var(--spark);}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start;}
+  .three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;}
+
+  .ps-block{padding:2.5rem;border:1px solid var(--line);}
+  .ps-label{font-size:0.65rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:1rem;}
+  .label-problem{color:#e05555;}.label-solution{color:var(--forge);}
+  .ps-text{font-size:0.95rem;line-height:1.6;color:var(--muted);}
+
+  /* Review card mock */
+  .review-mock{background:var(--paper);border:1px solid var(--line);border-radius:2px;overflow:hidden;}
+  .review-header{padding:1rem 1.5rem;background:var(--ink);color:var(--paper);font-family:'Unbounded',sans-serif;font-size:0.72rem;font-weight:700;display:flex;justify-content:space-between;align-items:center;}
+  .review-badge{font-size:0.6rem;padding:0.2rem 0.6rem;border-radius:2px;background:rgba(100,200,100,0.2);color:#7ec77e;}
+  .review-body{padding:1.5rem;}
+  .review-row{display:flex;gap:1rem;padding:0.8rem 0;border-bottom:1px solid var(--line);align-items:flex-start;}
+  .review-row:last-child{border-bottom:none;}
+  .review-icon{font-size:1rem;flex-shrink:0;margin-top:0.1rem;}
+  .review-text{font-size:0.85rem;color:var(--ink);}
+  .review-text strong{font-weight:700;}
+  .review-text span{color:var(--muted);font-size:0.8rem;}
+
+  .flow{display:flex;flex-direction:column;gap:1px;}
+  .flow-step{display:grid;grid-template-columns:5rem 1fr;border:1px solid rgba(245,242,235,0.1);background:var(--steel);transition:border-color 0.2s;}
+  .flow-step:hover{border-color:var(--spark);}
+  .flow-step-num{display:flex;align-items:center;justify-content:center;font-family:'Unbounded',sans-serif;font-size:1.8rem;font-weight:900;color:rgba(245,242,235,0.1);border-right:1px solid rgba(245,242,235,0.08);padding:1.5rem;}
+  .flow-step-content{padding:1.5rem 2rem;}
+  .flow-step-title{font-family:'Unbounded',sans-serif;font-size:0.85rem;font-weight:700;margin-bottom:0.4rem;color:var(--paper);}
+  .flow-step-desc{font-size:0.88rem;color:rgba(245,242,235,0.5);}
+
+  .benefit-card{padding:2rem;border:1px solid var(--line);}
+  .benefit-icon{font-size:1.5rem;margin-bottom:1rem;}
+  .benefit-title{font-family:'Unbounded',sans-serif;font-size:0.85rem;font-weight:700;margin-bottom:0.5rem;}
+  .benefit-desc{font-size:0.85rem;color:var(--muted);line-height:1.5;}
+
+  .domains-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(245,242,235,0.08);}
+  .domain-card{background:var(--steel);padding:2rem 1.5rem;}
+  .domain-emoji{font-size:2rem;margin-bottom:1rem;}
+  .domain-name{font-family:'Unbounded',sans-serif;font-size:0.82rem;font-weight:700;margin-bottom:0.5rem;color:var(--paper);}
+  .domain-check{font-size:0.8rem;color:rgba(245,242,235,0.5);}
+
+  .cta-section{padding:6rem 2.5rem;background:var(--forge);color:var(--paper);display:grid;grid-template-columns:1fr auto;align-items:center;gap:3rem;}
+  .cta-title{font-family:'Unbounded',sans-serif;font-size:clamp(1.3rem,3vw,2.2rem);font-weight:900;line-height:1.1;letter-spacing:-0.02em;}
+  .btn-white{background:var(--paper);color:var(--forge);font-family:'Unbounded',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;padding:1rem 2rem;border-radius:2px;white-space:nowrap;}
+  footer{padding:2.5rem;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;}
+  .footer-logo{font-family:'Unbounded',sans-serif;font-weight:900;font-size:0.9rem;color:var(--ink);text-decoration:none;}
+  .footer-logo span{color:var(--forge);}
+  .footer-tagline{font-size:0.8rem;color:var(--muted);}
+  .fade-up{opacity:0;transform:translateY(24px);transition:opacity 0.6s ease,transform 0.6s ease;}
+  .fade-up.visible{opacity:1;transform:none;}
+  @media(max-width:900px){.page-hero,.two-col,.three-col,.cta-section,.domains-grid{grid-template-columns:1fr;}.page-hero{padding:8rem 1.5rem 4rem;}.section{padding:4rem 1.5rem;}nav{padding:1rem 1.5rem;}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo">Skill<span>Forge</span></a>
+  <a href="index.html" class="nav-back">← Назад на главную</a>
+</nav>
+
+<section class="page-hero">
+  <div>
+    <span class="hero-tag">AI-инструмент #02</span>
+    <h1 class="page-title">AI-Ассистент<br><em>Ментора</em></h1>
+    <p class="page-subtitle">Первичное ревью за секунды. Преподаватель видит только то, на что стоит обратить внимание.</p>
+  </div>
+  <div class="hero-meta">
+    <div class="meta-item"><div class="meta-label">Для кого</div><div class="meta-value">Преподаватели-менторы</div></div>
+    <div class="meta-item"><div class="meta-label">Проблема</div><div class="meta-value">Мало времени на детальную проверку каждой работы</div></div>
+    <div class="meta-item"><div class="meta-label">Статус</div><div class="meta-value" style="color:var(--spark);">В разработке</div></div>
+  </div>
+</section>
+
+<section class="section">
+  <h2 class="section-title fade-up">Проблема и <em>решение</em></h2>
+  <div class="two-col">
+    <div class="ps-block fade-up">
+      <div class="ps-label label-problem">Боль ментора</div>
+      <p class="ps-text">У преподавателя 20 студентов, 20 проектов, и 2 часа в неделю на платформу. Проверить каждую строчку кода, каждый ГОСТ в чертеже, каждую запятую в тексте — невозможно. Результат: либо поверхностная обратная связь, либо ментор выгорает.</p>
+    </div>
+    <div class="ps-block fade-up">
+      <div class="ps-label label-solution">Решение</div>
+      <p class="ps-text">AI делает «нулевое ревью» до того, как ментор открывает работу. Проверяет базовые ошибки по категории задания. Ментор получает краткий отчёт и тратит время только на смысловой анализ — то, что машина не может сделать.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <h2 class="section-title fade-up">Пример <em>AI-отчёта</em></h2>
+  <div class="two-col">
+    <div class="fade-up">
+      <p style="font-size:0.9rem;color:var(--muted);margin-bottom:1.5rem;">Так выглядит отчёт, который ментор получает перед проверкой работы по программированию:</p>
+      <div class="review-mock">
+        <div class="review-header">
+          Авто-ревью: Иванов И.И. — Задание #47
+          <span class="review-badge">✓ Базовых ошибок нет</span>
+        </div>
+        <div class="review-body">
+          <div class="review-row">
+            <div class="review-icon">✅</div>
+            <div class="review-text"><strong>Синтаксис:</strong> Ошибок компиляции не обнаружено.<br><span>Код запускается без ошибок.</span></div>
+          </div>
+          <div class="review-row">
+            <div class="review-icon">✅</div>
+            <div class="review-text"><strong>Оформление:</strong> Соответствует стандарту PEP8.<br><span>Отступы, именование переменных — корректны.</span></div>
+          </div>
+          <div class="review-row">
+            <div class="review-icon">⚠️</div>
+            <div class="review-text"><strong>Логика:</strong> Обратите внимание на функцию <code style="background:rgba(0,0,0,0.06);padding:0 4px;border-radius:2px;">calculate_tax()</code>.<br><span>Граничный случай при value=0 не обрабатывается.</span></div>
+          </div>
+          <div class="review-row">
+            <div class="review-icon">💡</div>
+            <div class="review-text"><strong>Документация:</strong> Docstrings отсутствуют у 3 функций.<br><span>Рекомендуется добавить описания для публичных методов.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="fade-up">
+      <p style="font-size:0.9rem;color:var(--muted);margin-bottom:1.5rem;">Что ментор получает на выходе:</p>
+      <div style="display:flex;flex-direction:column;gap:1px;">
+        <div style="padding:1.2rem 1.5rem;border:1px solid var(--line);display:flex;gap:1rem;align-items:center;">
+          <span style="font-size:1.2rem;">⏱</span>
+          <div>
+            <div style="font-family:'Unbounded',sans-serif;font-size:0.82rem;font-weight:700;margin-bottom:0.2rem;">Экономия времени</div>
+            <div style="font-size:0.82rem;color:var(--muted);">~70% меньше времени на рутинную проверку</div>
+          </div>
+        </div>
+        <div style="padding:1.2rem 1.5rem;border:1px solid var(--line);display:flex;gap:1rem;align-items:center;">
+          <span style="font-size:1.2rem;">🎯</span>
+          <div>
+            <div style="font-family:'Unbounded',sans-serif;font-size:0.82rem;font-weight:700;margin-bottom:0.2rem;">Фокус на важном</div>
+            <div style="font-size:0.82rem;color:var(--muted);">Смысловой анализ, а не охота за опечатками</div>
+          </div>
+        </div>
+        <div style="padding:1.2rem 1.5rem;border:1px solid var(--line);display:flex;gap:1rem;align-items:center;">
+          <span style="font-size:1.2rem;">📊</span>
+          <div>
+            <div style="font-family:'Unbounded',sans-serif;font-size:0.82rem;font-weight:700;margin-bottom:0.2rem;">Статистика по группе</div>
+            <div style="font-size:0.82rem;color:var(--muted);">Видит, какие ошибки системные у всей группы</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-steel">
+  <h2 class="section-title spark fade-up">Что проверяет <em>AI</em></h2>
+  <div class="domains-grid">
+    <div class="domain-card fade-up">
+      <div class="domain-emoji">💻</div>
+      <div class="domain-name">Программирование</div>
+      <div class="domain-check">Синтаксис, PEP8/стандарты, базовая логика, документация</div>
+    </div>
+    <div class="domain-card fade-up">
+      <div class="domain-emoji">📐</div>
+      <div class="domain-name">Чертежи и инженерия</div>
+      <div class="domain-check">Базовые требования ГОСТ, оформление рамок, подписи</div>
+    </div>
+    <div class="domain-card fade-up">
+      <div class="domain-emoji">✍️</div>
+      <div class="domain-name">Тексты и документы</div>
+      <div class="domain-check">Грамматика, структура, соответствие ТЗ, плагиат</div>
+    </div>
+    <div class="domain-card fade-up">
+      <div class="domain-emoji">🎨</div>
+      <div class="domain-name">Дизайн</div>
+      <div class="domain-check">Наличие обязательных элементов, соответствие брифу</div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <h2 class="section-title fade-up">Как это <em>работает</em></h2>
+  <div class="flow" style="border:none;">
+    <div class="flow-step fade-up" style="background:var(--paper);">
+      <div class="flow-step-num" style="color:var(--line);border-right-color:var(--line);">01</div>
+      <div class="flow-step-content">
+        <div class="flow-step-title" style="color:var(--ink);">Студент сдаёт работу</div>
+        <div class="flow-step-desc" style="color:var(--muted);">Загружает файл или ссылку на репозиторий. Система определяет тип задания автоматически.</div>
+      </div>
+    </div>
+    <div class="flow-step fade-up" style="background:var(--paper);">
+      <div class="flow-step-num" style="color:var(--line);border-right-color:var(--line);">02</div>
+      <div class="flow-step-content">
+        <div class="flow-step-title" style="color:var(--ink);">AI проводит первичный анализ</div>
+        <div class="flow-step-desc" style="color:var(--muted);">За 30–60 секунд система проверяет работу по стандартным критериям для данной категории задания.</div>
+      </div>
+    </div>
+    <div class="flow-step fade-up" style="background:var(--paper);">
+      <div class="flow-step-num" style="color:var(--line);border-right-color:var(--line);">03</div>
+      <div class="flow-step-content">
+        <div class="flow-step-title" style="color:var(--ink);">Ментор получает отчёт</div>
+        <div class="flow-step-desc" style="color:var(--muted);">Push-уведомление с кратким резюме: «Базовых ошибок нет, обратите внимание на логику функции X.»</div>
+      </div>
+    </div>
+    <div class="flow-step fade-up" style="background:var(--paper);">
+      <div class="flow-step-num" style="color:var(--line);border-right-color:var(--line);">04</div>
+      <div class="flow-step-content">
+        <div class="flow-step-title" style="color:var(--ink);">Ментор проверяет суть</div>
+        <div class="flow-step-desc" style="color:var(--muted);">Фокусируется на смысловом качестве, методологии, правильности подхода — а не на запятых и отступах.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="cta-title">Ты преподаватель и хочешь<br>стать ментором на SkillForge?</div>
+  <a href="index.html#ai" class="btn-white">Все AI-инструменты</a>
+</section>
+
+<footer>
+  <a href="index.html" class="footer-logo">Skill<span>Forge</span></a>
+  <span class="footer-tagline">Куём навыки вместе © 2025</span>
+</footer>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((e,i) => { if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*80);observer.unobserve(e.target);} });
+},{threshold:0.1});
+document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+</script>
+</body>
+</html>
