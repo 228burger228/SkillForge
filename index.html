@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkillForge — Куём навыки вместе</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Onest:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d0d0d;
+    --paper: #f5f2eb;
+    --forge: #E85C2A;
+    --steel: #1A3A5C;
+    --spark: #F5A623;
+    --muted: #7a756d;
+    --line: rgba(13,13,13,0.12);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Onest', sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 2.5rem;
+    border-bottom: 1px solid var(--line);
+    background: rgba(245,242,235,0.92);
+    backdrop-filter: blur(12px);
+  }
+  .nav-logo {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 900; font-size: 1.1rem; letter-spacing: -0.02em;
+    color: var(--ink); text-decoration: none;
+  }
+  .nav-logo span { color: var(--forge); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.85rem; font-weight: 500; letter-spacing: 0.04em;
+    text-transform: uppercase; text-decoration: none;
+    color: var(--muted); transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-cta {
+    background: var(--ink); color: var(--paper);
+    font-family: 'Unbounded', sans-serif; font-size: 0.72rem;
+    font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    text-decoration: none; padding: 0.65rem 1.4rem;
+    border-radius: 2px; transition: background 0.2s;
+  }
+  .nav-cta:hover { background: var(--forge); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh; padding: 8rem 2.5rem 5rem;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4rem;
+    align-items: center; position: relative;
+    border-bottom: 1px solid var(--line);
+  }
+  .hero::before {
+    content: '';
+    position: absolute; top: 0; right: 0;
+    width: 55%; height: 100%;
+    background: var(--steel);
+    z-index: 0;
+  }
+  .hero-left { position: relative; z-index: 1; }
+  .hero-eyebrow {
+    font-size: 0.75rem; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--forge);
+    margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .hero-eyebrow::before {
+    content: ''; display: inline-block;
+    width: 2rem; height: 2px; background: var(--forge);
+  }
+  .hero-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(2.8rem, 6vw, 5.5rem);
+    font-weight: 900; line-height: 0.95; letter-spacing: -0.03em;
+    margin-bottom: 2rem;
+  }
+  .hero-title .accent { color: var(--forge); }
+  .hero-subtitle {
+    font-size: 1.1rem; color: var(--muted);
+    max-width: 480px; margin-bottom: 3rem; line-height: 1.7;
+  }
+  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--forge); color: #fff;
+    font-family: 'Unbounded', sans-serif; font-size: 0.72rem;
+    font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    text-decoration: none; padding: 1rem 2rem;
+    border-radius: 2px; transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(232,92,42,0.35); }
+  .btn-secondary {
+    border: 1.5px solid var(--ink); color: var(--ink);
+    font-family: 'Unbounded', sans-serif; font-size: 0.72rem;
+    font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    text-decoration: none; padding: 1rem 2rem;
+    border-radius: 2px; transition: all 0.15s;
+  }
+  .btn-secondary:hover { background: var(--ink); color: var(--paper); }
+
+  .hero-right {
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column; gap: 1px;
+  }
+  .hero-stat {
+    background: rgba(245,242,235,0.07);
+    border: 1px solid rgba(245,242,235,0.15);
+    padding: 1.8rem 2rem;
+    backdrop-filter: blur(4px);
+  }
+  .hero-stat:first-child { border-top: none; margin-top: -1px; }
+  .stat-number {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 2.6rem; font-weight: 900; color: var(--paper);
+    line-height: 1; margin-bottom: 0.5rem;
+  }
+  .stat-label { font-size: 0.85rem; color: rgba(245,242,235,0.55); }
+
+  /* ── MANIFESTO ── */
+  .manifesto {
+    padding: 7rem 2.5rem;
+    display: grid; grid-template-columns: 1fr 2fr; gap: 5rem;
+    align-items: start; border-bottom: 1px solid var(--line);
+  }
+  .section-label {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--forge);
+    writing-mode: vertical-rl; transform: rotate(180deg);
+    align-self: start; padding-top: 0.3rem;
+  }
+  .manifesto-text {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(1.3rem, 2.5vw, 2rem);
+    font-weight: 400; line-height: 1.4; letter-spacing: -0.01em;
+  }
+  .manifesto-text strong { font-weight: 700; }
+  .manifesto-text em { color: var(--forge); font-style: normal; }
+
+  /* ── PROBLEM ── */
+  .problems {
+    padding: 7rem 2.5rem;
+    border-bottom: 1px solid var(--line);
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .problems-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 4rem;
+  }
+  .problems-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 900; line-height: 1.05; letter-spacing: -0.02em;
+  }
+  .problems-title em { color: var(--forge); font-style: normal; }
+  .section-label-light {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: rgba(245,242,235,0.4);
+  }
+  .problem-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+    background: rgba(245,242,235,0.08);
+  }
+  .problem-card {
+    background: var(--ink); padding: 2.5rem;
+    transition: background 0.2s;
+  }
+  .problem-card:hover { background: #161616; }
+  .problem-tag {
+    display: inline-block;
+    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; padding: 0.3rem 0.7rem;
+    margin-bottom: 1.5rem; border-radius: 2px;
+  }
+  .tag-student { background: rgba(232,92,42,0.2); color: var(--forge); }
+  .tag-uni { background: rgba(245,166,35,0.2); color: var(--spark); }
+  .tag-biz { background: rgba(26,58,92,0.6); color: #7eb8e8; }
+  .problem-heading {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 1rem; font-weight: 700; margin-bottom: 1rem;
+    line-height: 1.3;
+  }
+  .problem-list { list-style: none; }
+  .problem-list li {
+    font-size: 0.9rem; color: rgba(245,242,235,0.6);
+    padding: 0.5rem 0; border-bottom: 1px solid rgba(245,242,235,0.07);
+    display: flex; align-items: flex-start; gap: 0.6rem;
+  }
+  .problem-list li::before {
+    content: '—'; color: var(--forge); flex-shrink: 0; margin-top: 0.05rem;
+  }
+
+  /* ── ECOSYSTEM ── */
+  .ecosystem {
+    padding: 7rem 2.5rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .eco-header {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4rem;
+    align-items: end; margin-bottom: 5rem;
+  }
+  .eco-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 900; line-height: 1.05; letter-spacing: -0.02em;
+  }
+  .eco-title em { color: var(--forge); font-style: normal; }
+  .eco-desc { font-size: 1rem; color: var(--muted); line-height: 1.7; }
+
+  .eco-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
+  }
+  .eco-card {
+    border: 1px solid var(--line); padding: 2.5rem;
+    position: relative; overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .eco-card::before {
+    content: attr(data-num);
+    font-family: 'Unbounded', sans-serif;
+    font-size: 5rem; font-weight: 900; color: var(--line);
+    position: absolute; top: -0.5rem; right: 1rem;
+    line-height: 1; pointer-events: none;
+  }
+  .eco-card:hover { border-color: var(--forge); }
+  .eco-card-role {
+    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--forge); margin-bottom: 1rem;
+  }
+  .eco-card-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; line-height: 1.3;
+  }
+  .eco-card-list { list-style: none; }
+  .eco-card-list li {
+    font-size: 0.88rem; color: var(--muted);
+    padding: 0.4rem 0; border-bottom: 1px solid var(--line);
+    display: flex; gap: 0.6rem;
+  }
+  .eco-card-list li::before { content: '↗'; color: var(--forge); flex-shrink: 0; }
+
+  /* ── AI FEATURES ── */
+  .ai-section {
+    padding: 7rem 2.5rem;
+    background: var(--steel);
+    color: var(--paper);
+    border-bottom: 1px solid var(--line);
+  }
+  .ai-header {
+    margin-bottom: 4rem;
+    display: flex; justify-content: space-between; align-items: flex-end;
+  }
+  .ai-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 900; line-height: 1.05; letter-spacing: -0.02em;
+  }
+  .ai-title em { color: var(--spark); font-style: normal; }
+  .ai-badge {
+    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; padding: 0.4rem 0.9rem;
+    background: rgba(245,166,35,0.15); color: var(--spark);
+    border: 1px solid rgba(245,166,35,0.3); border-radius: 2px;
+  }
+  .ai-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px;
+    background: rgba(245,242,235,0.08);
+  }
+  .ai-card {
+    background: var(--steel); padding: 2rem 1.6rem;
+    display: flex; flex-direction: column; gap: 1rem;
+    text-decoration: none; color: inherit;
+    transition: background 0.2s;
+    position: relative; overflow: hidden;
+  }
+  .ai-card:hover { background: #1e4670; }
+  .ai-card-num {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em;
+    color: rgba(245,242,235,0.3);
+  }
+  .ai-card-icon {
+    font-size: 1.8rem; line-height: 1;
+  }
+  .ai-card-name {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.78rem; font-weight: 700;
+    line-height: 1.3; letter-spacing: -0.01em;
+  }
+  .ai-card-desc {
+    font-size: 0.8rem; color: rgba(245,242,235,0.5);
+    line-height: 1.5; flex: 1;
+  }
+  .ai-card-link {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--spark);
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+  .ai-card-link::after { content: '→'; transition: transform 0.2s; }
+  .ai-card:hover .ai-card-link::after { transform: translateX(4px); }
+  .ai-card-badge {
+    position: absolute; top: 1rem; right: 1rem;
+    font-size: 0.6rem; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; padding: 0.2rem 0.5rem;
+    background: rgba(245,166,35,0.2); color: var(--spark);
+    border-radius: 2px;
+  }
+
+  /* ── TRUST ── */
+  .trust {
+    padding: 7rem 2.5rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .trust-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 900; line-height: 1.05; letter-spacing: -0.02em;
+    margin-bottom: 4rem;
+  }
+  .trust-title em { color: var(--forge); font-style: normal; }
+  .trust-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
+  }
+  .trust-card {
+    padding: 2.5rem; border: 1px solid var(--line);
+    position: relative;
+  }
+  .trust-num {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 3.5rem; font-weight: 900; color: var(--line);
+    line-height: 1; margin-bottom: 1rem;
+  }
+  .trust-heading {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.95rem; font-weight: 700; margin-bottom: 0.75rem;
+  }
+  .trust-text { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
+
+  /* ── SOCIAL BANNER ── */
+  .social-banner {
+    padding: 7rem 2.5rem;
+    background: var(--forge); color: var(--paper);
+    display: grid; grid-template-columns: 1fr auto;
+    align-items: center; gap: 4rem;
+  }
+  .social-text {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(1.5rem, 3.5vw, 2.8rem);
+    font-weight: 900; line-height: 1.1; letter-spacing: -0.02em;
+  }
+  .btn-white {
+    background: var(--paper); color: var(--forge);
+    font-family: 'Unbounded', sans-serif; font-size: 0.72rem;
+    font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    text-decoration: none; padding: 1.2rem 2.5rem;
+    border-radius: 2px; white-space: nowrap; transition: opacity 0.15s;
+    flex-shrink: 0;
+  }
+  .btn-white:hover { opacity: 0.9; }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 3rem 2.5rem;
+    border-top: 1px solid var(--line);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-logo {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 900; font-size: 0.9rem; color: var(--ink);
+    text-decoration: none;
+  }
+  .footer-logo span { color: var(--forge); }
+  .footer-tagline { font-size: 0.8rem; color: var(--muted); }
+  .footer-links { display: flex; gap: 1.5rem; list-style: none; }
+  .footer-links a {
+    font-size: 0.8rem; color: var(--muted);
+    text-decoration: none; transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--ink); }
+
+  /* ── ANIMATIONS ── */
+  .fade-up {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: none; }
+
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero::before { display: none; }
+    .hero-right { display: none; }
+    .manifesto { grid-template-columns: 1fr; gap: 2rem; }
+    .section-label { writing-mode: horizontal-tb; transform: none; }
+    .problem-grid, .eco-grid, .trust-grid { grid-template-columns: 1fr; }
+    .ai-grid { grid-template-columns: repeat(2, 1fr); }
+    .social-banner { grid-template-columns: 1fr; }
+    .eco-header { grid-template-columns: 1fr; }
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Skill<span>Forge</span></a>
+  <ul class="nav-links">
+    <li><a href="#problems">Проблема</a></li>
+    <li><a href="#ecosystem">Экосистема</a></li>
+    <li><a href="#ai">AI-инструменты</a></li>
+    <li><a href="#trust">Доверие</a></li>
+  </ul>
+  <a href="#" class="nav-cta">Вступить в список</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left fade-up">
+    <div class="hero-eyebrow">Образование × Реальная экономика</div>
+    <h1 class="hero-title">
+      Куём<br><em>навыки</em><br>вместе
+    </h1>
+    <p class="hero-subtitle">
+      SkillForge объединяет студентов российских вузов и колледжей с реальными бизнес-задачами — под защитой преподавателей-менторов.
+    </p>
+    <div class="hero-actions">
+      <a href="#ecosystem" class="btn-primary">Как это работает</a>
+      <a href="#ai" class="btn-secondary">AI-инструменты</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-stat">
+      <div class="stat-number">3</div>
+      <div class="stat-label">стороны выигрывают: студент, вуз, бизнес</div>
+    </div>
+    <div class="hero-stat">
+      <div class="stat-number">5</div>
+      <div class="stat-label">AI-инструментов для умной работы</div>
+    </div>
+    <div class="hero-stat">
+      <div class="stat-number">≠</div>
+      <div class="stat-label">это не Upwork, не FL.ru, не hh.ru</div>
+    </div>
+    <div class="hero-stat">
+      <div class="stat-number">100%</div>
+      <div class="stat-label">верифицированные участники платформы</div>
+    </div>
+  </div>
+</section>
+
+<!-- MANIFESTO -->
+<section class="manifesto">
+  <span class="section-label">Манифест</span>
+  <div class="manifesto-text fade-up">
+    Миллионы студентов уходят на практику <strong>не по специальности.</strong><br>
+    Тысячи бизнесов не могут найти <strong>молодых кадров с опытом.</strong><br>
+    Колледжи теряют связь с <strong>реальным рынком труда.</strong><br><br>
+    <em>Мы не мирились с этим.</em><br>
+    Мы сделали SkillForge.
+  </div>
+</section>
+
+<!-- PROBLEMS -->
+<section class="problems" id="problems">
+  <div class="problems-header">
+    <h2 class="problems-title">Три стороны.<br><em>Одна пропасть.</em></h2>
+    <span class="section-label-light">Проблема</span>
+  </div>
+  <div class="problem-grid">
+    <div class="problem-card fade-up">
+      <span class="problem-tag tag-student">Студент / СПО</span>
+      <h3 class="problem-heading">«Теоретический» голод</h3>
+      <ul class="problem-list">
+        <li>Практика формальная или непрофильная</li>
+        <li>Нет конкурентоспособного портфолио</li>
+        <li>Вынужден работать не по специальности</li>
+        <li>СПО в неравных условиях с ВО</li>
+      </ul>
+    </div>
+    <div class="problem-card fade-up">
+      <span class="problem-tag tag-uni">Вуз / Колледж</span>
+      <h3 class="problem-heading">Разрыв с рынком</h3>
+      <ul class="problem-list">
+        <li>Программа отстаёт от требований рынка</li>
+        <li>Сложно организовать массовую практику</li>
+        <li>Нет инструментов оценки практических навыков</li>
+        <li>Слабая связь с работодателями</li>
+      </ul>
+    </div>
+    <div class="problem-card fade-up">
+      <span class="problem-tag tag-biz">Бизнес</span>
+      <h3 class="problem-heading">Дефицит и риск</h3>
+      <ul class="problem-list">
+        <li>Высокий риск найма молодых без опыта</li>
+        <li>Дефицит кадров с прикладными навыками</li>
+        <li>Дорого обучать с нуля</li>
+        <li>Нет канала раннего рекрутинга</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ECOSYSTEM -->
+<section class="ecosystem" id="ecosystem">
+  <div class="eco-header">
+    <h2 class="eco-title fade-up">SkillForge<br>даёт каждому<br><em>своё.</em></h2>
+    <p class="eco-desc fade-up">
+      Платформа построена вокруг триединства — студент, вуз и бизнес получают конкретную ценность. Никто не является только «потребителем».
+    </p>
+  </div>
+  <div class="eco-grid">
+    <div class="eco-card fade-up" data-num="01">
+      <div class="eco-card-role">Студент</div>
+      <h3 class="eco-card-title">Реальная практика, доход и портфолио</h3>
+      <ul class="eco-card-list">
+        <li>Гарантированно релевантная практика</li>
+        <li>Защищённая сделка с проверенным заказчиком</li>
+        <li>Поддержка и ревью от ментора</li>
+        <li>Цифровое портфолио с кейсами</li>
+        <li>Легальный заработок во время учёбы</li>
+      </ul>
+    </div>
+    <div class="eco-card fade-up" data-num="02">
+      <div class="eco-card-role">Вуз / Колледж</div>
+      <h3 class="eco-card-title">Инструмент для ФГОС и связь с рынком</h3>
+      <ul class="eco-card-list">
+        <li>Выполнение требований ФГОС по практике</li>
+        <li>Рост привлекательности для абитуриентов</li>
+        <li>Данные о востребованности выпускников</li>
+        <li>Прямой канал связи с работодателями</li>
+      </ul>
+    </div>
+    <div class="eco-card fade-up" data-num="03">
+      <div class="eco-card-role">Бизнес-заказчик</div>
+      <h3 class="eco-card-title">Мотивированные кадры с предсказуемым качеством</h3>
+      <ul class="eco-card-list">
+        <li>Доступ к отобранным и курируемым студентам</li>
+        <li>«Проектная рассылка» в конкретный вуз</li>
+        <li>Канал раннего рекрутинга</li>
+        <li>Снижение рисков через педагогический контроль</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- AI FEATURES -->
+<section class="ai-section" id="ai">
+  <div class="ai-header">
+    <h2 class="ai-title">Платформа<br>работает на <em>AI.</em></h2>
+    <span class="ai-badge">В разработке</span>
+  </div>
+  <div class="ai-grid">
+    <a href="ai-tz.html" class="ai-card">
+      <span class="ai-card-num">01</span>
+      <div class="ai-card-icon">📋</div>
+      <div class="ai-card-name">AI-Генератор ТЗ</div>
+      <div class="ai-card-desc">Превращает «сделайте красиво» в структурированное техническое задание с критериями приёмки.</div>
+      <div class="ai-card-link">Подробнее</div>
+    </a>
+    <a href="ai-mentor.html" class="ai-card">
+      <span class="ai-card-num">02</span>
+      <div class="ai-card-icon">🧑‍🏫</div>
+      <div class="ai-card-name">AI-Ассистент Ментора</div>
+      <div class="ai-card-desc">Делает первичное ревью работ — по ГОСТам, коду, тексту — и даёт преподавателю готовый отчёт.</div>
+      <div class="ai-card-link">Подробнее</div>
+    </a>
+    <a href="ai-matching.html" class="ai-card">
+      <span class="ai-card-num">03</span>
+      <div class="ai-card-icon">🎯</div>
+      <div class="ai-card-name">Умный мэтчинг</div>
+      <div class="ai-card-desc">Рекомендательная система подбирает задачи студенту и студентов — бизнесу на основе профиля.</div>
+      <div class="ai-card-link">Подробнее</div>
+    </a>
+    <a href="ai-portfolio.html" class="ai-card">
+      <span class="ai-card-num">04</span>
+      <div class="ai-card-icon">✨</div>
+      <div class="ai-card-name">Smart-Портфолио</div>
+      <div class="ai-card-desc">Автоматически генерирует красивое описание кейса и присваивает теги навыков после завершения задачи.</div>
+      <div class="ai-card-link">Подробнее</div>
+    </a>
+    <a href="ai-knowledge.html" class="ai-card">
+      <span class="ai-card-num">05</span>
+      <span class="ai-card-badge">Скоро</span>
+      <div class="ai-card-icon">📚</div>
+      <div class="ai-card-name">AI-База знаний</div>
+      <div class="ai-card-desc">Интерактивный бот по библиотеке навыков — отвечает на вопросы с учётом специфики платформы.</div>
+      <div class="ai-card-link">Подробнее</div>
+    </a>
+  </div>
+</section>
+
+<!-- TRUST -->
+<section class="trust" id="trust">
+  <h2 class="trust-title fade-up">Трёхуровневая<br><em>верификация.</em></h2>
+  <div class="trust-grid">
+    <div class="trust-card fade-up">
+      <div class="trust-num">01</div>
+      <h3 class="trust-heading">Студент</h3>
+      <p class="trust-text">Верификация статуса через edu-email или официальную справку из учебного заведения. Студент работает только в рамках своей специальности.</p>
+    </div>
+    <div class="trust-card fade-up">
+      <div class="trust-num">02</div>
+      <h3 class="trust-heading">Бизнес-заказчик</h3>
+      <p class="trust-text">Проверка через ЕГРЮЛ/ЕГРИП или службой безопасности платформы. Гарантия студенту — работа только с легальным бизнесом.</p>
+    </div>
+    <div class="trust-card fade-up">
+      <div class="trust-num">03</div>
+      <h3 class="trust-heading">Ментор</h3>
+      <p class="trust-text">Подтверждение аффилиации с учебным заведением. Ментор не просто ревьюер — он куратор процесса, методический гарант качества.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SOCIAL BANNER -->
+<section class="social-banner">
+  <div class="social-text fade-up">
+    Поддерживает нацпроект<br>«Профессионалитет» и<br>реальную экономику России.
+  </div>
+  <a href="#" class="btn-white">Хочу участвовать</a>
+</section>
+
+<footer>
+  <a href="index.html" class="footer-logo">Skill<span>Forge</span></a>
+  <span class="footer-tagline">Куём навыки вместе © 2025</span>
+  <ul class="footer-links">
+    <li><a href="#problems">Проблема</a></li>
+    <li><a href="#ecosystem">Экосистема</a></li>
+    <li><a href="#ai">AI-инструменты</a></li>
+  </ul>
+</footer>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 80);
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
