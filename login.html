@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Войти — SkillForge</title>
+<link rel="stylesheet" href="landing.css">
+<style>
+body { min-height: 100vh; display: flex; flex-direction: column; }
+.login-wrap {
+  flex: 1; display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh;
+}
+/* Left: brand panel */
+.login-brand {
+  background: var(--ink); color: var(--paper);
+  display: flex; flex-direction: column;
+  padding: 3rem;
+  position: relative; overflow: hidden;
+}
+.login-brand::before {
+  content: 'SF'; font-family: var(--font-d);
+  font-size: 22rem; font-weight: 900; color: rgba(255,255,255,0.03);
+  position: absolute; right: -3rem; bottom: -3rem; line-height: 1;
+  pointer-events: none;
+}
+.brand-logo {
+  font-family: var(--font-d); font-weight: 900; font-size: 1.1rem;
+  margin-bottom: auto;
+}
+.brand-logo span { color: var(--forge); }
+.brand-title {
+  font-family: var(--font-d);
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  font-weight: 900; line-height: 1.05; letter-spacing: -0.02em;
+  margin-bottom: 1.5rem;
+}
+.brand-title em { color: var(--forge); font-style: normal; }
+.brand-desc { font-size: 0.92rem; color: rgba(245,242,235,0.55); line-height: 1.7; max-width: 380px; margin-bottom: 3rem; }
+.brand-roles { display: flex; flex-direction: column; gap: 1px; }
+.brand-role {
+  display: flex; align-items: center; gap: 0.85rem;
+  padding: 1rem 1.25rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+  transition: background 0.15s;
+}
+.brand-role:hover { background: rgba(255,255,255,0.07); }
+.role-icon { font-size: 1.3rem; flex-shrink: 0; }
+.role-name { font-family: var(--font-d); font-size: 0.78rem; font-weight: 700; margin-bottom: 0.15rem; }
+.role-desc { font-size: 0.72rem; color: rgba(245,242,235,0.45); }
+
+/* Right: form panel */
+.login-form-wrap {
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 3rem 4rem; background: var(--paper);
+}
+.lf-back {
+  font-size: 0.78rem; color: var(--muted); margin-bottom: 2.5rem;
+  display: flex; align-items: center; gap: 0.4rem;
+  transition: color 0.15s; cursor: pointer; width: fit-content;
+}
+.lf-back:hover { color: var(--ink); }
+.lf-header { margin-bottom: 2rem; }
+.lf-title { font-family: var(--font-d); font-size: 1.5rem; font-weight: 900; letter-spacing: -0.02em; margin-bottom: 0.4rem; }
+.lf-sub   { font-size: 0.88rem; color: var(--muted); }
+
+/* Role selector */
+.role-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-bottom: 1.75rem; }
+.role-tab {
+  display: flex; flex-direction: column; align-items: center; gap: 0.35rem;
+  padding: 0.9rem 0.5rem; border: 1.5px solid rgba(13,13,13,0.10);
+  border-radius: 6px; cursor: pointer; transition: all 0.15s;
+  background: white; text-align: center;
+}
+.role-tab:hover { border-color: var(--forge); }
+.role-tab.selected { border-color: var(--forge); background: rgba(232,92,42,0.05); }
+.role-tab-icon { font-size: 1.4rem; }
+.role-tab-label { font-family: var(--font-d); font-size: 0.6rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink); }
+
+/* Form */
+.lf-group { margin-bottom: 1.1rem; }
+.lf-label { display: block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: #555; margin-bottom: 0.45rem; }
+.lf-input {
+  width: 100%; padding: 0.7rem 0.9rem;
+  font-family: var(--font-b); font-size: 0.9rem; color: var(--ink);
+  background: white; border: 1.5px solid rgba(13,13,13,0.12);
+  border-radius: 4px; outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.lf-input:focus { border-color: var(--forge); box-shadow: 0 0 0 3px rgba(232,92,42,0.10); }
+.lf-submit {
+  width: 100%; padding: 0.85rem;
+  font-family: var(--font-d); font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.07em; text-transform: uppercase;
+  background: var(--forge); color: white; border: none;
+  border-radius: 4px; cursor: pointer; margin-top: 0.5rem;
+  transition: background 0.15s, transform 0.12s;
+}
+.lf-submit:hover { background: #d14e20; transform: translateY(-1px); }
+.lf-divider { display: flex; align-items: center; gap: 0.75rem; margin: 1.25rem 0; color: var(--muted); font-size: 0.78rem; }
+.lf-divider::before, .lf-divider::after { content: ''; flex: 1; height: 1px; background: rgba(13,13,13,0.10); }
+.lf-toggle { text-align: center; font-size: 0.82rem; color: var(--muted); margin-top: 1.25rem; }
+.lf-toggle a { color: var(--forge); font-weight: 500; }
+.lf-legal { font-size: 0.72rem; color: var(--muted); line-height: 1.5; margin-top: 1rem; text-align: center; }
+.lf-legal a { color: var(--muted); text-decoration: underline; }
+
+/* Register extras */
+.reg-extra { display: none; }
+.reg-extra.show { display: block; }
+.form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+
+/* Demo link bar */
+.demo-bar {
+  background: rgba(232,92,42,0.08); border: 1px solid rgba(232,92,42,0.2);
+  border-radius: 6px; padding: 0.85rem 1.1rem; margin-bottom: 1.5rem;
+  font-size: 0.8rem; color: var(--muted);
+}
+.demo-bar strong { color: var(--ink); }
+.demo-links { display: flex; gap: 0.75rem; margin-top: 0.5rem; flex-wrap: wrap; }
+.demo-link {
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--forge); cursor: pointer;
+  padding: 0.28rem 0.65rem; border: 1px solid var(--forge);
+  border-radius: 2px; transition: all 0.15s; text-decoration: none;
+}
+.demo-link:hover { background: var(--forge); color: white; }
+
+@media (max-width: 768px) {
+  .login-wrap { grid-template-columns: 1fr; }
+  .login-brand { display: none; }
+  .login-form-wrap { padding: 2rem 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="login-wrap">
+  <!-- Left brand panel -->
+  <div class="login-brand">
+    <div class="brand-logo">Skill<span>Forge</span></div>
+    <div>
+      <h1 class="brand-title">Куём<br><em>навыки</em><br>вместе.</h1>
+      <p class="brand-desc">Платформа, где студенты выполняют реальные бизнес-задачи под педагогическим кураторством — и зарабатывают ещё во время учёбы.</p>
+      <div class="brand-roles">
+        <div class="brand-role">
+          <div class="role-icon">🎓</div>
+          <div><div class="role-name">Студент</div><div class="role-desc">Практика, портфолио, заработок</div></div>
+        </div>
+        <div class="brand-role">
+          <div class="role-icon">👨‍🏫</div>
+          <div><div class="role-name">Ментор</div><div class="role-desc">Кураторство и AI-ревью</div></div>
+        </div>
+        <div class="brand-role">
+          <div class="role-icon">💼</div>
+          <div><div class="role-name">Заказчик</div><div class="role-desc">Верифицированные таланты</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right form -->
+  <div class="login-form-wrap">
+    <a href="index.html" class="lf-back">← Вернуться на главную</a>
+
+    <div class="lf-header">
+      <h2 class="lf-title" id="formTitle">Войти в SkillForge</h2>
+      <p class="lf-sub" id="formSub">Введите данные вашего аккаунта</p>
+    </div>
+
+    <!-- Demo shortcut bar -->
+    <div class="demo-bar">
+      <strong>Демо-доступ</strong> — выбери роль и попади сразу в дашборд:
+      <div class="demo-links">
+        <a href="dashboard-student.html" class="demo-link">🎓 Студент</a>
+        <a href="dashboard-mentor.html"  class="demo-link">👨‍🏫 Ментор</a>
+        <a href="dashboard-business.html" class="demo-link">💼 Заказчик</a>
+      </div>
+    </div>
+
+    <!-- Role tabs (for register) -->
+    <div class="role-tabs reg-extra" id="roleTabs">
+      <div class="role-tab selected" onclick="selectRole(this,'Студент')">
+        <span class="role-tab-icon">🎓</span>
+        <span class="role-tab-label">Студент</span>
+      </div>
+      <div class="role-tab" onclick="selectRole(this,'Ментор')">
+        <span class="role-tab-icon">👨‍🏫</span>
+        <span class="role-tab-label">Ментор</span>
+      </div>
+      <div class="role-tab" onclick="selectRole(this,'Заказчик')">
+        <span class="role-tab-icon">💼</span>
+        <span class="role-tab-label">Заказчик</span>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <form onsubmit="handleSubmit(event)">
+      <!-- Register extras -->
+      <div class="form-row-2 reg-extra" id="nameFields">
+        <div class="lf-group" style="margin-bottom:0;">
+          <label class="lf-label">Имя</label>
+          <input class="lf-input" type="text" placeholder="Алёна">
+        </div>
+        <div class="lf-group" style="margin-bottom:0;">
+          <label class="lf-label">Фамилия</label>
+          <input class="lf-input" type="text" placeholder="Козлова">
+        </div>
+      </div>
+      <div style="height:0.85rem;" class="reg-extra"></div>
+
+      <div class="lf-group">
+        <label class="lf-label">Email</label>
+        <input class="lf-input" type="email" placeholder="alena@edu.ru" required>
+      </div>
+      <div class="lf-group">
+        <label class="lf-label">Пароль</label>
+        <input class="lf-input" type="password" placeholder="••••••••" required>
+      </div>
+
+      <!-- Register: university -->
+      <div class="lf-group reg-extra" id="uniField">
+        <label class="lf-label">Учебное заведение / организация</label>
+        <input class="lf-input" type="text" placeholder="Колледж дизайна №10 или ООО «ТехКафе»">
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;margin-bottom:1rem;" id="forgotLink">
+        <a href="#" style="font-size:0.78rem;color:var(--forge);">Забыли пароль?</a>
+      </div>
+
+      <button type="submit" class="lf-submit" id="submitBtn">Войти →</button>
+    </form>
+
+    <div class="lf-toggle" id="toggleLink">
+      Нет аккаунта? <a href="#" onclick="toggleMode(event)">Зарегистрироваться</a>
+    </div>
+    <p class="lf-legal">Нажимая «Войти», вы соглашаетесь с <a href="#">Условиями использования</a> и <a href="#">Политикой конфиденциальности</a>.</p>
+  </div>
+</div>
+
+<script>
+let isRegister = false;
+let selectedRole = 'Студент';
+
+function toggleMode(e) {
+  e.preventDefault();
+  isRegister = !isRegister;
+  const title   = document.getElementById('formTitle');
+  const sub     = document.getElementById('formSub');
+  const btn     = document.getElementById('submitBtn');
+  const toggle  = document.getElementById('toggleLink');
+  const forgot  = document.getElementById('forgotLink');
+  const extras  = document.querySelectorAll('.reg-extra');
+
+  if (isRegister) {
+    title.textContent  = 'Создать аккаунт';
+    sub.textContent    = 'Выберите роль и заполните данные';
+    btn.textContent    = 'Зарегистрироваться →';
+    toggle.innerHTML   = 'Уже есть аккаунт? <a href="#" onclick="toggleMode(event)">Войти</a>';
+    forgot.style.display = 'none';
+    extras.forEach(el => el.classList.add('show'));
+  } else {
+    title.textContent  = 'Войти в SkillForge';
+    sub.textContent    = 'Введите данные вашего аккаунта';
+    btn.textContent    = 'Войти →';
+    toggle.innerHTML   = 'Нет аккаунта? <a href="#" onclick="toggleMode(event)">Зарегистрироваться</a>';
+    forgot.style.display = 'flex';
+    extras.forEach(el => el.classList.remove('show'));
+  }
+}
+
+function selectRole(el, role) {
+  selectedRole = role;
+  document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function handleSubmit(e) {
+  e.preventDefault();
+  const destinations = {
+    'Студент':   'dashboard-student.html',
+    'Ментор':    'dashboard-mentor.html',
+    'Заказчик':  'dashboard-business.html'
+  };
+  window.location.href = destinations[selectedRole] || 'dashboard-student.html';
+}
+</script>
+</body>
+</html>
