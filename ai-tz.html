@@ -1,268 +1,525 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI-Генератор ТЗ — SkillForge</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Onest:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 <style>
-  :root {
-    --ink: #0d0d0d;
-    --paper: #f5f2eb;
-    --forge: #E85C2A;
-    --steel: #1A3A5C;
-    --spark: #F5A623;
-    --muted: #7a756d;
-    --line: rgba(13,13,13,0.12);
-  }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body { background: var(--paper); color: var(--ink); font-family: 'Onest', sans-serif; font-weight: 400; line-height: 1.6; overflow-x: hidden; }
+.sk-page{display:none;}.sk-page.active{display:block;}
+.main-page{opacity:0;transition:opacity 0.35s;}.main-page.loaded{opacity:1;}
 
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 1.2rem 2.5rem;
-    border-bottom: 1px solid var(--line);
-    background: rgba(245,242,235,0.92); backdrop-filter: blur(12px);
-  }
-  .nav-logo { font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: 1.1rem; letter-spacing: -0.02em; color: var(--ink); text-decoration: none; }
-  .nav-logo span { color: var(--forge); }
-  .nav-back { font-size: 0.8rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; text-decoration: none; color: var(--muted); display: flex; align-items: center; gap: 0.5rem; transition: color 0.2s; }
-  .nav-back:hover { color: var(--ink); }
+/* GENERATOR LAYOUT */
+.gen-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;align-items:start;}
+@media(max-width:900px){.gen-grid{grid-template-columns:1fr;}}
 
-  /* PAGE HERO */
-  .page-hero {
-    padding: 10rem 2.5rem 6rem;
-    display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: end;
-    border-bottom: 1px solid var(--line);
-    background: var(--ink); color: var(--paper);
-    position: relative; overflow: hidden;
-  }
-  .page-hero::before {
-    content: attr(data-bg);
-    font-family: 'Unbounded', sans-serif;
-    font-size: 18rem; font-weight: 900; color: rgba(245,242,235,0.04);
-    position: absolute; right: -2rem; bottom: -3rem;
-    line-height: 1; pointer-events: none; white-space: nowrap;
-  }
-  .hero-tag {
-    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
-    padding: 0.3rem 0.7rem; border-radius: 2px; display: inline-block; margin-bottom: 1.5rem;
-    background: rgba(232,92,42,0.2); color: var(--forge);
-  }
-  .page-title {
-    font-family: 'Unbounded', sans-serif;
-    font-size: clamp(2rem, 5vw, 4rem); font-weight: 900;
-    line-height: 1.0; letter-spacing: -0.03em;
-  }
-  .page-title em { color: var(--forge); font-style: normal; }
-  .page-subtitle { font-size: 1rem; color: rgba(245,242,235,0.55); line-height: 1.7; }
-  .hero-meta { display: flex; flex-direction: column; gap: 1.5rem; }
-  .meta-item { padding: 1.5rem; border: 1px solid rgba(245,242,235,0.1); }
-  .meta-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(245,242,235,0.35); margin-bottom: 0.5rem; }
-  .meta-value { font-size: 0.95rem; }
+/* INPUT PANEL */
+.gen-input-card{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-sm);}
+.gen-input-header{padding:1rem 1.25rem;border-bottom:1px solid var(--border);background:var(--bg-raised);display:flex;align-items:center;justify-content:space-between;}
+.gen-input-title{font-family:var(--font-display);font-size:0.8rem;font-weight:700;color:var(--text-primary);}
+.gen-input-body{padding:1.25rem;}
 
-  /* SECTIONS */
-  .section { padding: 6rem 2.5rem; border-bottom: 1px solid var(--line); }
-  .section-dark { background: var(--ink); color: var(--paper); }
-  .section-title {
-    font-family: 'Unbounded', sans-serif;
-    font-size: clamp(1.5rem, 3vw, 2.5rem); font-weight: 900;
-    line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 3rem;
-  }
-  .section-title em { color: var(--forge); font-style: normal; }
-  .section-title.light em { color: var(--spark); }
-  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
-  .three-col { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
+/* TEXTAREA HERO */
+.gen-textarea{width:100%;min-height:160px;border:1.5px solid var(--border);border-radius:var(--radius-md);padding:1rem;font-family:var(--font-body);font-size:0.88rem;color:var(--text-primary);background:var(--bg-raised);resize:vertical;transition:all var(--transition);outline:none;line-height:1.6;}
+.gen-textarea:focus{border-color:var(--forge);box-shadow:0 0 0 3px var(--forge-dim);background:var(--bg-surface);}
+.gen-textarea::placeholder{color:var(--text-muted);}
 
-  /* PROBLEM/SOLUTION */
-  .ps-block { padding: 2.5rem; border: 1px solid var(--line); }
-  .ps-block.dark { border-color: rgba(245,242,235,0.1); }
-  .ps-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1rem; }
-  .ps-label.problem { color: #e05555; }
-  .ps-label.solution { color: var(--forge); }
-  .ps-label.solution-light { color: var(--spark); }
-  .ps-text { font-size: 0.95rem; line-height: 1.6; }
-  .ps-text.muted { color: var(--muted); }
-  .ps-text.muted-light { color: rgba(245,242,235,0.6); }
+/* EXAMPLES */
+.example-chips{display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:0.75rem;}
+.ex-chip{font-size:0.72rem;padding:0.3rem 0.7rem;border-radius:var(--radius-sm);background:var(--bg-overlay);border:1px solid var(--border);cursor:pointer;transition:all var(--transition);color:var(--text-secondary);}
+.ex-chip:hover{border-color:var(--forge-border);color:var(--forge);background:var(--forge-dim);}
 
-  /* FLOW STEPS */
-  .flow { display: flex; flex-direction: column; gap: 1px; }
-  .flow-step {
-    display: grid; grid-template-columns: 5rem 1fr;
-    border: 1px solid var(--line); background: var(--paper);
-    transition: border-color 0.2s;
-  }
-  .flow-step:hover { border-color: var(--forge); }
-  .flow-step-num {
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Unbounded', sans-serif; font-size: 1.8rem; font-weight: 900;
-    color: var(--line); border-right: 1px solid var(--line); padding: 1.5rem;
-  }
-  .flow-step-content { padding: 1.5rem 2rem; }
-  .flow-step-title { font-family: 'Unbounded', sans-serif; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.4rem; }
-  .flow-step-desc { font-size: 0.88rem; color: var(--muted); }
+/* OPTIONS */
+.gen-options{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-top:1rem;}
+.gen-option{background:var(--bg-raised);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0.65rem 0.85rem;cursor:pointer;transition:all var(--transition);}
+.gen-option:hover{border-color:var(--forge-border);}
+.gen-option.selected{border-color:var(--forge);background:var(--forge-dim);}
+.gen-option-label{font-size:0.7rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.3rem;}
+.gen-option select,.gen-option input[type=number]{background:transparent;border:none;padding:0;font-size:0.84rem;font-family:var(--font-body);color:var(--text-primary);width:100%;cursor:pointer;outline:none;}
 
-  /* BENEFIT CARDS */
-  .benefit-card { padding: 2rem; border: 1px solid var(--line); }
-  .benefit-icon { font-size: 1.5rem; margin-bottom: 1rem; }
-  .benefit-title { font-family: 'Unbounded', sans-serif; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem; }
-  .benefit-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.5; }
+/* GENERATE BUTTON */
+.btn-generate{width:100%;padding:0.9rem;font-family:var(--font-display);font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;background:var(--forge);color:#fff;border:none;border-radius:var(--radius-sm);cursor:pointer;transition:all var(--transition);display:flex;align-items:center;justify-content:center;gap:0.5rem;margin-top:1rem;}
+.btn-generate:hover:not(:disabled){background:var(--forge-hover);transform:translateY(-1px);box-shadow:0 4px 12px rgba(232,92,42,0.3);}
+.btn-generate:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
 
-  /* STATUS BADGE */
-  .status-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 4rem; }
-  .status-badge {
-    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-    padding: 0.4rem 0.9rem; border-radius: 2px;
-    background: rgba(245,166,35,0.15); color: var(--spark);
-    border: 1px solid rgba(245,166,35,0.3);
-  }
-  .status-desc { font-size: 0.85rem; color: var(--muted); }
+/* OUTPUT PANEL */
+.gen-output-card{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-sm);}
+.gen-output-header{padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.gen-output-title{font-family:var(--font-display);font-size:0.8rem;font-weight:700;}
 
-  /* CTA */
-  .cta-section {
-    padding: 6rem 2.5rem;
-    background: var(--forge); color: var(--paper);
-    display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 3rem;
-  }
-  .cta-title { font-family: 'Unbounded', sans-serif; font-size: clamp(1.3rem, 3vw, 2.2rem); font-weight: 900; line-height: 1.1; letter-spacing: -0.02em; }
-  .btn-white { background: var(--paper); color: var(--forge); font-family: 'Unbounded', sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; text-decoration: none; padding: 1rem 2rem; border-radius: 2px; white-space: nowrap; }
+/* EMPTY STATE */
+.gen-empty{padding:3rem 1.5rem;text-align:center;color:var(--text-muted);}
+.gen-empty-icon{font-size:2.5rem;margin-bottom:0.75rem;opacity:0.3;}
+.gen-empty-text{font-size:0.84rem;color:var(--text-secondary);margin-bottom:0.4rem;font-weight:500;}
+.gen-empty-sub{font-size:0.76rem;color:var(--text-muted);line-height:1.5;}
 
-  footer { padding: 2.5rem; border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
-  .footer-logo { font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: 0.9rem; color: var(--ink); text-decoration: none; }
-  .footer-logo span { color: var(--forge); }
-  .footer-tagline { font-size: 0.8rem; color: var(--muted); }
+/* LOADING STATE */
+.gen-loading{padding:2rem 1.5rem;}
+.loading-bar{height:3px;border-radius:2px;background:var(--forge-dim);overflow:hidden;margin-bottom:1rem;}
+@keyframes loading-sweep{0%{transform:translateX(-100%)}100%{transform:translateX(400%)}}
+.loading-fill{height:100%;width:30%;background:var(--forge);border-radius:2px;animation:loading-sweep 1.2s ease-in-out infinite;}
+.loading-lines{display:flex;flex-direction:column;gap:0.6rem;}
+.loading-line{height:10px;border-radius:3px;animation:shimmer 1.6s infinite linear;}
+[data-theme="light"] .loading-line{background:linear-gradient(90deg,#e8e4da 25%,#f2ede4 50%,#e8e4da 75%);background-size:600px 100%;}
+[data-theme="dark"] .loading-line{background:linear-gradient(90deg,#1e253a 25%,#252d45 50%,#1e253a 75%);background-size:600px 100%;}
+@keyframes shimmer{0%{background-position:-600px 0}100%{background-position:600px 0}}
 
-  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
-  .fade-up.visible { opacity: 1; transform: none; }
+/* TZ OUTPUT */
+.tz-result{padding:1.25rem;}
+.tz-section{margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border);}
+.tz-section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.tz-section-title{font-size:0.65rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.6rem;display:flex;align-items:center;gap:0.4rem;}
+.tz-section-title::before{content:'';width:1rem;height:2px;background:var(--forge);}
+.tz-content{font-size:0.84rem;color:var(--text-secondary);line-height:1.65;}
+.tz-list{list-style:none;padding:0;}
+.tz-list li{font-size:0.84rem;color:var(--text-secondary);padding:0.3rem 0;display:flex;gap:0.5rem;line-height:1.5;}
+.tz-list li::before{content:'→';color:var(--forge);flex-shrink:0;}
+.tz-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;}
+.tz-meta-item{background:var(--bg-raised);border-radius:var(--radius-sm);padding:0.6rem 0.8rem;}
+.tz-meta-label{font-size:0.6rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.25rem;}
+.tz-meta-val{font-size:0.82rem;color:var(--text-primary);font-weight:500;}
+.tz-checklist{display:flex;flex-direction:column;gap:0.4rem;}
+.tz-check{display:flex;align-items:flex-start;gap:0.6rem;font-size:0.82rem;color:var(--text-secondary);padding:0.35rem 0.7rem;background:var(--bg-raised);border-radius:var(--radius-sm);}
+.tz-check-icon{color:var(--status-done);flex-shrink:0;margin-top:0.05rem;}
+.tz-actions{padding:1rem 1.25rem;border-top:1px solid var(--border);display:flex;gap:0.75rem;flex-wrap:wrap;background:var(--bg-raised);}
 
-  @media (max-width: 900px) {
-    .page-hero, .two-col, .three-col, .cta-section { grid-template-columns: 1fr; }
-    .page-hero { padding: 8rem 1.5rem 4rem; }
-    .section { padding: 4rem 1.5rem; }
-    nav { padding: 1rem 1.5rem; }
-  }
+/* HISTORY */
+.history-item{display:flex;align-items:center;gap:0.75rem;padding:0.75rem 1.25rem;border-bottom:1px solid var(--border);cursor:pointer;transition:background var(--transition);}
+.history-item:last-child{border-bottom:none;}
+.history-item:hover{background:var(--bg-raised);}
+.history-item-info{flex:1;}
+.history-item-title{font-size:0.82rem;font-weight:500;margin-bottom:0.15rem;}
+.history-item-meta{font-size:0.7rem;color:var(--text-muted);}
+
+/* TIPS */
+.tip-list{display:flex;flex-direction:column;gap:0.5rem;margin-top:0.75rem;}
+.tip-item{display:flex;gap:0.6rem;padding:0.6rem 0.85rem;background:var(--bg-raised);border-radius:var(--radius-sm);border-left:2px solid var(--forge-border);}
+.tip-icon{font-size:0.9rem;flex-shrink:0;}
+.tip-text{font-size:0.78rem;color:var(--text-secondary);line-height:1.45;}
 </style>
 </head>
 <body>
+<div class="app-shell">
+<aside class="sidebar">
+  <div class="sidebar-logo"><a href="index.html">Skill<span>Forge</span></a></div>
+  <div class="sidebar-user">
+    <div class="user-card">
+      <div class="avatar avatar-md av-forge">ТК</div>
+      <div><div class="user-name">Алексей Воронов</div><div class="user-org">ООО «ТехКафе»</div><span class="user-role-badge badge-business">Заказчик · Верифицирован ✓</span></div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Главное</div>
+    <a href="dashboard-business.html" class="nav-item"><span class="nav-icon">⊞</span> Дашборд</a>
+    <a href="#" class="nav-item"><span class="nav-icon">◈</span> Мои задачи <span class="nav-badge">4</span></a>
+    <a href="ai-tz.html" class="nav-item active"><span class="nav-icon">✦</span> AI-Генератор ТЗ <span class="user-role-badge badge-ai" style="margin-left:auto;margin-top:0;font-size:0.5rem;">AI</span></a>
+    <div class="nav-section-label">Инструменты</div>
+    <a href="#" class="nav-item"><span class="nav-icon">◈</span> AI-мэтчинг</a>
+    <a href="#" class="nav-item"><span class="nav-icon">✉</span> Чат <span class="nav-badge">5</span></a>
+  </nav>
+  <div class="sidebar-bottom">
+    <a href="#" class="nav-item"><span class="nav-icon">⚙</span> Настройки</a>
+    <a href="index.html" class="nav-item text-muted"><span class="nav-icon">←</span> Выйти</a>
+  </div>
+</aside>
 
-<nav>
-  <a href="index.html" class="nav-logo">Skill<span>Forge</span></a>
-  <a href="index.html" class="nav-back">← Назад на главную</a>
+<header class="topbar">
+  <div class="topbar-breadcrumb"><a href="dashboard-business.html">Дашборд</a><span class="topbar-sep">/</span><span class="crumb-active">AI-Генератор ТЗ</span></div>
+  <div class="topbar-actions">
+    <button class="theme-toggle" onclick="toggleTheme()"><span class="icon-moon">🌙</span><span class="icon-sun">☀️</span></button>
+    <button class="icon-btn">🔔<span class="dot"></span></button>
+    <div class="avatar avatar-sm av-forge">ТК</div>
+  </div>
+</header>
+
+<main class="main-content">
+  <div class="sk-page active" id="skeleton">
+    <div class="skeleton" style="height:60px;border-radius:var(--radius-md);margin-bottom:1.25rem;"></div>
+    <div class="gen-grid">
+      <div class="skeleton" style="height:420px;border-radius:var(--radius-md);"></div>
+      <div class="skeleton" style="height:420px;border-radius:var(--radius-md);"></div>
+    </div>
+  </div>
+
+  <div class="main-page" id="mainPage">
+    <div class="page-header">
+      <div>
+        <div class="page-eyebrow">AI-инструмент · Для заказчиков</div>
+        <h1 class="page-title">Генератор ТЗ <span class="user-role-badge badge-ai" style="font-size:0.65rem;vertical-align:middle;">✦ Работает на Claude AI</span></h1>
+        <p class="page-subtitle">Опишите задачу своими словами — получите профессиональное ТЗ за 15 секунд</p>
+      </div>
+    </div>
+
+    <div class="gen-grid">
+      <!-- INPUT -->
+      <div class="gen-input-card">
+        <div class="gen-input-header">
+          <span class="gen-input-title">✦ Описание задачи</span>
+          <button class="btn btn-ghost btn-sm" onclick="clearInput()">Очистить</button>
+        </div>
+        <div class="gen-input-body">
+          <textarea class="gen-textarea" id="taskInput" placeholder="Опишите задачу своими словами. Например:
+
+«Хочу обновить сайт своей кофейни. Нужна современная страница с меню, галерей, кнопкой бронирования и картой. Клиенты в основном с телефона смотрят.»
+
+Не нужно быть техническим специалистом — AI разберётся!"></textarea>
+
+          <div class="form-hint mt-2">💡 Попробуйте один из примеров:</div>
+          <div class="example-chips">
+            <div class="ex-chip" onclick="fillExample(0)">Лендинг для кофейни</div>
+            <div class="ex-chip" onclick="fillExample(1)">Логотип для барбершопа</div>
+            <div class="ex-chip" onclick="fillExample(2)">SMM-стратегия для Telegram</div>
+            <div class="ex-chip" onclick="fillExample(3)">UI-кит для приложения</div>
+            <div class="ex-chip" onclick="fillExample(4)">Чертёж детали</div>
+          </div>
+
+          <div style="height:1rem;"></div>
+          <div class="form-label">Параметры задачи</div>
+          <div class="gen-options">
+            <div class="gen-option">
+              <div class="gen-option-label">Специализация</div>
+              <select id="specSelect">
+                <option value="design">Дизайн / UI/UX</option>
+                <option value="frontend">Веб-разработка</option>
+                <option value="smm">Маркетинг / SMM</option>
+                <option value="engineering">Инженерия / Чертежи</option>
+                <option value="copywriting">Копирайтинг</option>
+                <option value="video">Видеомонтаж</option>
+              </select>
+            </div>
+            <div class="gen-option">
+              <div class="gen-option-label">Срок (дней)</div>
+              <input type="number" id="deadlineInput" value="14" min="1" max="90">
+            </div>
+            <div class="gen-option">
+              <div class="gen-option-label">Бюджет (₽)</div>
+              <input type="number" id="budgetInput" value="1500" min="100" max="99999">
+            </div>
+            <div class="gen-option">
+              <div class="gen-option-label">Уровень студента</div>
+              <select id="levelSelect">
+                <option value="any">Любой</option>
+                <option value="1-2">1–2 курс</option>
+                <option value="3-4" selected>3–4 курс</option>
+                <option value="graduate">Выпускник</option>
+              </select>
+            </div>
+          </div>
+
+          <button class="btn-generate" id="generateBtn" onclick="generateTZ()">
+            <span id="btnIcon">✦</span>
+            <span id="btnText">Сгенерировать ТЗ</span>
+          </button>
+
+          <div class="tip-list mt-4">
+            <div class="tip-item"><span class="tip-icon">💡</span><span class="tip-text">Чем подробнее опишете — тем точнее ТЗ. Укажите целевую аудиторию, платформу и пожелания по стилю.</span></div>
+            <div class="tip-item"><span class="tip-icon">🎯</span><span class="tip-text">После генерации можно отредактировать любой раздел и опубликовать задачу одним кликом.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- OUTPUT -->
+      <div class="gen-output-card">
+        <div class="gen-output-header">
+          <span class="gen-output-title" id="outputTitle">Результат</span>
+          <div class="flex gap-2 items-center" id="outputActions" style="display:none!important;">
+            <button class="btn btn-secondary btn-sm" onclick="copyTZ()">📋 Копировать</button>
+            <button class="btn btn-primary btn-sm" onclick="publishTZ()">Опубликовать →</button>
+          </div>
+        </div>
+
+        <!-- Empty state -->
+        <div class="gen-empty" id="emptyState">
+          <div class="gen-empty-icon">📋</div>
+          <div class="gen-empty-text">Здесь появится ваше ТЗ</div>
+          <div class="gen-empty-sub">Опишите задачу слева и нажмите<br>«Сгенерировать ТЗ»</div>
+        </div>
+
+        <!-- Loading state -->
+        <div class="gen-loading" id="loadingState" style="display:none;">
+          <div class="loading-bar"><div class="loading-fill"></div></div>
+          <div class="text-xs text-muted mb-3" id="loadingText">✦ AI анализирует вашу задачу...</div>
+          <div class="loading-lines">
+            <div class="loading-line" style="width:60%;"></div>
+            <div class="loading-line" style="width:85%;"></div>
+            <div class="loading-line" style="width:70%;"></div>
+            <div class="loading-line" style="width:40%;"></div>
+            <div class="loading-line" style="width:75%;"></div>
+          </div>
+        </div>
+
+        <!-- Result -->
+        <div id="resultState" style="display:none;">
+          <div class="tz-result" id="tzContent"></div>
+          <div class="tz-actions">
+            <button class="btn btn-primary btn-sm" onclick="publishTZ()">Опубликовать задачу →</button>
+            <button class="btn btn-secondary btn-sm" onclick="copyTZ()">📋 Копировать ТЗ</button>
+            <button class="btn btn-ghost btn-sm" onclick="regenerate()">↺ Перегенерировать</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HISTORY -->
+    <div class="card mt-5" id="historySection" style="display:none;">
+      <div class="card-header"><span class="card-title">История генераций</span><button class="btn btn-ghost btn-sm" onclick="clearHistory()">Очистить</button></div>
+      <div class="card-body-flush" id="historyList"></div>
+    </div>
+
+  </div>
+</main>
+
+<nav class="bottom-nav">
+  <div class="bn-item" onclick="location.href='dashboard-business.html'"><span class="bn-icon">⊞</span><span class="bn-label">Главная</span></div>
+  <div class="bn-item"><span class="bn-icon">◈</span><span class="bn-label">Задачи</span><span class="bn-badge">4</span></div>
+  <div class="bn-item active"><span class="bn-icon">✦</span><span class="bn-label">AI-ТЗ</span></div>
+  <div class="bn-item"><span class="bn-icon">✉</span><span class="bn-label">Чат</span><span class="bn-badge">5</span></div>
+  <div class="bn-item"><span class="bn-icon">👤</span><span class="bn-label">Профиль</span></div>
 </nav>
-
-<section class="page-hero" data-bg="ТЗ">
-  <div>
-    <span class="hero-tag">AI-инструмент #01</span>
-    <h1 class="page-title">AI-Генератор<br><em>Технических</em><br>Заданий</h1>
-  </div>
-  <div class="hero-meta">
-    <div class="meta-item">
-      <div class="meta-label">Для кого</div>
-      <div class="meta-value">Бизнес-заказчики</div>
-    </div>
-    <div class="meta-item">
-      <div class="meta-label">Проблема</div>
-      <div class="meta-value">«Сделайте красиво и быстро» — студенты не понимают, что делать</div>
-    </div>
-    <div class="meta-item">
-      <div class="meta-label">Статус</div>
-      <div class="meta-value" style="color: var(--spark);">В разработке</div>
-    </div>
-  </div>
-</section>
-
-<!-- PROBLEM VS SOLUTION -->
-<section class="section">
-  <h2 class="section-title fade-up">Проблема и <em>решение</em></h2>
-  <div class="two-col">
-    <div class="ps-block fade-up">
-      <div class="ps-label problem">Боль заказчика</div>
-      <p class="ps-text muted">Предприниматель знает, чего хочет, но не умеет формулировать задачу профессионально. Размытые ТЗ — главная причина провала проектов и конфликтов между сторонами. Студент получает задание вроде «сайт для моей пекарни, что-то стильное», и тратит первую неделю только на уточнения.</p>
-    </div>
-    <div class="ps-block fade-up">
-      <div class="ps-label solution">Решение SkillForge AI</div>
-      <p class="ps-text muted">Заказчик описывает задачу в свободной форме — языковая модель превращает это в стандартизированное ТЗ: цель, задачи, сроки, критерии приёмки, необходимые навыки. Обе стороны видят одно и то же, работают по одному документу.</p>
-    </div>
-  </div>
-</section>
-
-<!-- HOW IT WORKS -->
-<section class="section section-dark">
-  <h2 class="section-title light fade-up">Как это <em>работает</em></h2>
-  <div class="flow">
-    <div class="flow-step fade-up" style="border-color: rgba(245,242,235,0.1); background: var(--ink);">
-      <div class="flow-step-num" style="color: rgba(245,242,235,0.1); border-right-color: rgba(245,242,235,0.08);">01</div>
-      <div class="flow-step-content">
-        <div class="flow-step-title" style="color: var(--paper);">Заказчик описывает задачу</div>
-        <div class="flow-step-desc" style="color: rgba(245,242,235,0.5);">В свободной форме, своими словами, без шаблонов. «Хочу лендинг для моей кофейни, нужны фото и кнопка бронирования столика.»</div>
-      </div>
-    </div>
-    <div class="flow-step fade-up" style="border-color: rgba(245,242,235,0.1); background: var(--ink);">
-      <div class="flow-step-num" style="color: rgba(245,242,235,0.1); border-right-color: rgba(245,242,235,0.08);">02</div>
-      <div class="flow-step-content">
-        <div class="flow-step-title" style="color: var(--paper);">AI задаёт уточняющие вопросы</div>
-        <div class="flow-step-desc" style="color: rgba(245,242,235,0.5);">Если данных недостаточно, модель просит уточнить: бюджет, аудитория, сроки, предпочтения по стилю. Диалог, а не анкета.</div>
-      </div>
-    </div>
-    <div class="flow-step fade-up" style="border-color: rgba(245,242,235,0.1); background: var(--ink);">
-      <div class="flow-step-num" style="color: rgba(245,242,235,0.1); border-right-color: rgba(245,242,235,0.08);">03</div>
-      <div class="flow-step-content">
-        <div class="flow-step-title" style="color: var(--paper);">Генерация структурированного ТЗ</div>
-        <div class="flow-step-desc" style="color: rgba(245,242,235,0.5);">Готовый документ: цель, задачи, стек/инструменты, сроки, критерии приёмки, требуемые компетенции исполнителя.</div>
-      </div>
-    </div>
-    <div class="flow-step fade-up" style="border-color: rgba(245,242,235,0.1); background: var(--ink);">
-      <div class="flow-step-num" style="color: rgba(245,242,235,0.1); border-right-color: rgba(245,242,235,0.08);">04</div>
-      <div class="flow-step-content">
-        <div class="flow-step-title" style="color: var(--paper);">Публикация и мэтчинг</div>
-        <div class="flow-step-desc" style="color: rgba(245,242,235,0.5);">ТЗ публикуется на платформе. AI-мэтчинг автоматически находит подходящих студентов по компетенциям.</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- BENEFITS -->
-<section class="section">
-  <h2 class="section-title fade-up">Что получают <em>все стороны</em></h2>
-  <div class="three-col">
-    <div class="benefit-card fade-up">
-      <div class="benefit-icon">📋</div>
-      <div class="benefit-title">Заказчик</div>
-      <div class="benefit-desc">Тратит 5 минут вместо часа на оформление задания. Получает документ, который понятен студенту и ментору с первого прочтения.</div>
-    </div>
-    <div class="benefit-card fade-up">
-      <div class="benefit-icon">🎓</div>
-      <div class="benefit-title">Студент</div>
-      <div class="benefit-desc">Чёткие критерии — нет пространства для «ну я думал по-другому». Знает заранее, что нужно сдать, чтобы получить оценку «принято».</div>
-    </div>
-    <div class="benefit-card fade-up">
-      <div class="benefit-icon">👨‍🏫</div>
-      <div class="benefit-title">Ментор</div>
-      <div class="benefit-desc">Видит чёткую задачу ещё до начала работы. Может оценить реалистичность ТЗ и скорректировать ожидания обеих сторон.</div>
-    </div>
-  </div>
-</section>
-
-<section class="cta-section">
-  <div class="cta-title">Хочешь быть одним из первых<br>заказчиков на SkillForge?</div>
-  <a href="index.html#ai" class="btn-white">Все AI-инструменты</a>
-</section>
-
-<footer>
-  <a href="index.html" class="footer-logo">Skill<span>Forge</span></a>
-  <span class="footer-tagline">Куём навыки вместе © 2025</span>
-</footer>
+</div>
 
 <script>
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach((e, i) => {
-    if (e.isIntersecting) { setTimeout(() => e.target.classList.add('visible'), i * 80); observer.unobserve(e.target); }
+(function(){const s=localStorage.getItem('sf-theme')||'light';document.documentElement.setAttribute('data-theme',s);})();
+function toggleTheme(){const h=document.documentElement;const n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);localStorage.setItem('sf-theme',n);}
+window.addEventListener('DOMContentLoaded',()=>{setTimeout(()=>{document.getElementById('skeleton').classList.remove('active');document.getElementById('mainPage').classList.add('loaded');},700);loadHistory();});
+
+const EXAMPLES = [
+  "Хочу сделать лендинг для моей кофейни. Нужна красивая страница с меню, фотогалереей, историей заведения и кнопкой онлайн-бронирования столика. Большинство посетителей заходит с телефона. Стиль — уютный, тёплый, современный.",
+  "Нужен логотип и базовый брендбук для мужской парикмахерской ChopChop. Стиль — мужской, немного ретро. Нужен логотип, цвета, шрифты и шаблоны для Instagram и визиток.",
+  "Хочу развивать Telegram-канал своей кофейни. Нужна SMM-стратегия: контент-план на месяц, рубрики, идеи публикаций, советы по вовлечённости. Аудитория — молодые люди 20-35 лет в Москве.",
+  "Нужен UI-кит для мобильного приложения доставки еды. Компоненты: кнопки, карточки товаров, форма заказа, навигация, экраны входа и каталога. Стиль — современный, чистый.",
+  "Требуется чертёж держателя для крепления кофемашины к барной стойке. Нагрузка до 15 кг. Нужны сборочный чертёж и спецификация деталей по ГОСТ."
+];
+
+let lastInput = '';
+let history = JSON.parse(localStorage.getItem('sf-tz-history') || '[]');
+
+function fillExample(idx) {
+  document.getElementById('taskInput').value = EXAMPLES[idx];
+  document.getElementById('taskInput').focus();
+}
+
+function clearInput() {
+  document.getElementById('taskInput').value = '';
+}
+
+async function generateTZ() {
+  const input = document.getElementById('taskInput').value.trim();
+  if (!input) {
+    document.getElementById('taskInput').style.borderColor = 'var(--status-rejected)';
+    setTimeout(() => document.getElementById('taskInput').style.borderColor = '', 1500);
+    return;
+  }
+  lastInput = input;
+  const spec = document.getElementById('specSelect').value;
+  const deadline = document.getElementById('deadlineInput').value;
+  const budget = document.getElementById('budgetInput').value;
+  const level = document.getElementById('levelSelect').value;
+
+  const specLabels = {design:'Дизайн / UI/UX', frontend:'Веб-разработка', smm:'Маркетинг / SMM', engineering:'Инженерия / Чертежи', copywriting:'Копирайтинг', video:'Видеомонтаж'};
+  const levelLabels = {any:'Любой', '1-2':'1–2 курс', '3-4':'3–4 курс', graduate:'Выпускник'};
+
+  // Show loading
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('resultState').style.display = 'none';
+  document.getElementById('loadingState').style.display = 'block';
+  document.getElementById('generateBtn').disabled = true;
+  document.getElementById('btnText').textContent = 'Генерация...';
+
+  const loadingMessages = [
+    '✦ AI анализирует вашу задачу...',
+    '✦ Формирует структуру ТЗ...',
+    '✦ Прописывает критерии приёмки...',
+    '✦ Финальная обработка...'
+  ];
+  let msgIdx = 0;
+  const msgInterval = setInterval(() => {
+    msgIdx = (msgIdx + 1) % loadingMessages.length;
+    const el = document.getElementById('loadingText');
+    if (el) el.textContent = loadingMessages[msgIdx];
+  }, 2000);
+
+  const systemPrompt = `Ты — профессиональный менеджер проектов на платформе SkillForge, которая соединяет студентов российских вузов и колледжей с реальными бизнес-заданиями.
+
+Твоя задача: превращать неформальное описание бизнес-задачи в структурированное техническое задание (ТЗ) для студента-исполнителя.
+
+Верни ТЗ строго в формате JSON (без markdown-обёртки, только чистый JSON):
+{
+  "title": "Название задачи (краткое, ёмкое)",
+  "goal": "Цель задачи — одно предложение",
+  "description": "Расширенное описание (2–4 предложения)",
+  "result": "Ожидаемый результат — что конкретно сдаёт исполнитель",
+  "stack": ["Инструмент1", "Инструмент2"],
+  "acceptance": ["Критерий 1", "Критерий 2", "Критерий 3", "Критерий 4", "Критерий 5"],
+  "skills": ["Навык1", "Навык2", "Навык3"],
+  "tips": "Совет студенту — что важно учесть"
+}
+
+Пиши на русском языке, деловым но понятным стилем. Критерии приёмки — конкретные и проверяемые. Используй реальные инструменты для выбранной специализации.`;
+
+  const userPrompt = `Специализация: ${specLabels[spec]}
+Срок выполнения: ${deadline} дней
+Бюджет: ${budget}₽
+Уровень студента: ${levelLabels[level]}
+
+Описание задачи от заказчика:
+"${input}"
+
+Составь структурированное ТЗ.`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userPrompt }]
+      })
+    });
+
+    clearInterval(msgInterval);
+
+    if (!response.ok) throw new Error(`API error: ${response.status}`);
+    const data = await response.json();
+    const text = data.content.map(b => b.text || '').join('');
+
+    let tz;
+    try {
+      const clean = text.replace(/```json|```/g, '').trim();
+      tz = JSON.parse(clean);
+    } catch {
+      throw new Error('Не удалось разобрать ответ AI');
+    }
+
+    renderTZ(tz, spec, deadline, budget, level, levelLabels);
+    saveToHistory(tz.title, input, tz);
+
+  } catch (err) {
+    clearInterval(msgInterval);
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('emptyState').style.display = 'block';
+    document.getElementById('emptyState').innerHTML = `
+      <div class="gen-empty-icon">⚠</div>
+      <div class="gen-empty-text">Ошибка генерации</div>
+      <div class="gen-empty-sub">${err.message}<br><br>Проверьте подключение и попробуйте снова.</div>
+      <button class="btn btn-secondary btn-sm mt-3" onclick="generateTZ()">Повторить</button>
+    `;
+  } finally {
+    document.getElementById('generateBtn').disabled = false;
+    document.getElementById('btnText').textContent = 'Сгенерировать ТЗ';
+    document.getElementById('btnIcon').textContent = '✦';
+  }
+}
+
+function renderTZ(tz, spec, deadline, budget, level, levelLabels) {
+  const specLabels = {design:'Дизайн / UI/UX', frontend:'Веб-разработка', smm:'Маркетинг / SMM', engineering:'Инженерия', copywriting:'Копирайтинг', video:'Видеомонтаж'};
+
+  const html = `
+    <div class="tz-section">
+      <div class="tz-section-title">Название задачи</div>
+      <div style="font-family:var(--font-display);font-size:1rem;font-weight:700;color:var(--text-primary);line-height:1.2;">${tz.title}</div>
+    </div>
+    <div class="tz-section">
+      <div class="tz-section-title">Цель</div>
+      <div class="tz-content">${tz.goal}</div>
+    </div>
+    <div class="tz-section">
+      <div class="tz-section-title">Описание</div>
+      <div class="tz-content">${tz.description}</div>
+    </div>
+    <div class="tz-section">
+      <div class="tz-section-title">Ожидаемый результат</div>
+      <div class="tz-content">${tz.result}</div>
+    </div>
+    <div class="tz-section">
+      <div class="tz-section-title">Параметры</div>
+      <div class="tz-meta-grid">
+        <div class="tz-meta-item"><div class="tz-meta-label">Специализация</div><div class="tz-meta-val">${specLabels[spec]}</div></div>
+        <div class="tz-meta-item"><div class="tz-meta-label">Срок</div><div class="tz-meta-val">${deadline} дней</div></div>
+        <div class="tz-meta-item"><div class="tz-meta-label">Вознаграждение</div><div class="tz-meta-val" style="color:var(--spark);">${parseInt(budget).toLocaleString()}₽</div></div>
+        <div class="tz-meta-item"><div class="tz-meta-label">Уровень</div><div class="tz-meta-val">${levelLabels[level]}</div></div>
+      </div>
+    </div>
+    <div class="tz-section">
+      <div class="tz-section-title">Инструменты и стек</div>
+      <div class="tag-row">${(tz.stack||[]).map(s=>`<span class="tag tag-forge">${s}</span>`).join('')}</div>
+    </div>
+    <div class="tz-section">
+      <div class="tz-section-title">Критерии приёмки</div>
+      <div class="tz-checklist">${(tz.acceptance||[]).map(a=>`<div class="tz-check"><span class="tz-check-icon">✓</span><span>${a}</span></div>`).join('')}</div>
+    </div>
+    <div class="tz-section">
+      <div class="tz-section-title">Необходимые навыки</div>
+      <div class="tag-row">${(tz.skills||[]).map(s=>`<span class="tag">${s}</span>`).join('')}</div>
+    </div>
+    ${tz.tips ? `<div class="tz-section">
+      <div class="tz-section-title">Совет студенту от AI</div>
+      <div style="padding:0.75rem 0.85rem;background:var(--forge-dim);border-left:2px solid var(--forge);border-radius:0 var(--radius-sm) var(--radius-sm) 0;font-size:0.82rem;color:var(--text-secondary);line-height:1.5;">💡 ${tz.tips}</div>
+    </div>` : ''}
+    <div style="padding:0.5rem 0;display:flex;align-items:center;gap:0.4rem;font-size:0.68rem;color:var(--text-muted);">
+      <span class="user-role-badge badge-ai">✦ AI</span> Сгенерировано Claude AI · SkillForge
+    </div>
+  `;
+
+  document.getElementById('tzContent').innerHTML = html;
+  document.getElementById('loadingState').style.display = 'none';
+  document.getElementById('resultState').style.display = 'block';
+  document.getElementById('outputTitle').textContent = '✦ Готовое ТЗ';
+}
+
+function copyTZ() {
+  const content = document.getElementById('tzContent');
+  if (!content) return;
+  const text = content.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    btn.textContent = '✓ Скопировано';
+    setTimeout(() => btn.textContent = '📋 Копировать', 2000);
   });
-}, { threshold: 0.1 });
-document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+}
+
+function publishTZ() {
+  alert('Задача будет опубликована! В реальной платформе здесь откроется форма подтверждения публикации.');
+}
+
+function regenerate() { generateTZ(); }
+
+function saveToHistory(title, input, tz) {
+  history.unshift({ title, input, tz, date: new Date().toLocaleDateString('ru-RU') });
+  if (history.length > 5) history = history.slice(0, 5);
+  localStorage.setItem('sf-tz-history', JSON.stringify(history));
+  loadHistory();
+}
+
+function loadHistory() {
+  if (!history.length) return;
+  document.getElementById('historySection').style.display = 'block';
+  const list = document.getElementById('historyList');
+  list.innerHTML = history.map((h, i) => `
+    <div class="history-item" onclick="loadFromHistory(${i})">
+      <div class="avatar avatar-xs av-forge" style="font-size:0.55rem;">ТЗ</div>
+      <div class="history-item-info">
+        <div class="history-item-title">${h.title}</div>
+        <div class="history-item-meta">${h.date} · ${h.input.slice(0, 50)}...</div>
+      </div>
+      <span class="user-role-badge badge-ai">Загрузить</span>
+    </div>
+  `).join('');
+}
+
+function loadFromHistory(idx) {
+  const h = history[idx];
+  document.getElementById('taskInput').value = h.input;
+  renderTZ(h.tz, 'design', '14', '1500', '3-4', {any:'Любой','1-2':'1–2 курс','3-4':'3–4 курс',graduate:'Выпускник'});
+}
+
+function clearHistory() {
+  history = [];
+  localStorage.removeItem('sf-tz-history');
+  document.getElementById('historySection').style.display = 'none';
+}
 </script>
 </body>
 </html>
